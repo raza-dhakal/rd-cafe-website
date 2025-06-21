@@ -386,3 +386,15 @@ with app.app_context():
     else:
         print("Admin user already exists.")
     print("One-time setup finished.")
+
+    # ... your create_app() function is above this ...
+app = create_app()
+
+# ================================================
+# TEMPORARY HACK - RUNNING IT AGAIN
+# ================================================
+with app.app_context():
+    print("--- RUNNING DB SETUP HACK AGAIN ---")
+    db.create_all()
+    # ... (the rest of the setup code) ...
+    print("--- DB SETUP HACK FINISHED ---")
