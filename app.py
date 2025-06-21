@@ -380,5 +380,3 @@ def admin_otp_logs():
 
 # This line allows you to run the app directly from your computer
 # For deployment on PythonAnywhere, this block is not strictly necessary but doesn't cause harm
-if __name__ == '__main__':
-    app.run(debug=True, port=5001)
