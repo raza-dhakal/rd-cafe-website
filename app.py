@@ -1,6 +1,5 @@
 # ==========================================================
-# FINAL APP.PY FOR RENDER DEPLOYMENT
-# This is the complete and corrected version.
+# FINAL APP.PY FOR RENDER DEPLOYMENT (WITH TEMPORARY SETUP HACK)
 # ==========================================================
 
 import os
@@ -110,7 +109,7 @@ def create_app():
     # --- Register Blueprints ---
     google_blueprint = make_google_blueprint(
         client_id=os.getenv("GOOGLE_OAUTH_CLIENT_ID"),
-        secret_key=os.getenv("GOOGLE_OAUTH_CLIENT_SECRET"),
+        client_secret=os.getenv("GOOGLE_OAUTH_CLIENT_SECRET"),
         scope=["profile", "email"]
     )
     app.register_blueprint(google_blueprint, url_prefix="/login")
@@ -238,7 +237,7 @@ def create_app():
         if request.method == 'POST':
             user_otp, admin_email = request.form['otp'], session['admin_email_for_otp_verification']
             five_minutes_ago = datetime.utcnow() - timedelta(minutes=5)
-            valid_otp = OtpLog.query.filter(OtpLog.admin_email == admin_email, OtpLog.otp_code == user_otp, OtpLog.is_used == False, OtpLog.created_at > five_minutes_ago).first()
+            valid__otp = OtpLog.query.filter(OtpLog.admin_email == admin_email, OtpLog.otp_code == user_otp, OtpLog.is_used == False, OtpLog.created_at > five_minutes_ago).first()
             if valid_otp:
                 valid_otp.is_used = True
                 db.session.commit()
@@ -251,6 +250,7 @@ def create_app():
                 return redirect(url_for('admin_login'))
         return render_template('admin_verify_otp.html')
 
+    # ... (All other admin routes are here) ...
     @app.route('/admin/dashboard')
     def admin_dashboard():
         if 'admin_logged_in' not in session: return redirect(url_for('admin_login'))
@@ -360,25 +360,28 @@ def create_app():
         logs = OtpLog.query.order_by(OtpLog.created_at.desc()).all()
         return render_template('admin_otp_logs.html', logs=logs)
 
-    # --- Database Setup Command ---
-    @app.cli.command("init-db")
-    def init_db_command():
-        """Creates database tables and admin user."""
-        db.create_all()
-        if not Admin.query.filter_by(email='rjndkl1224@gmail.com').first():
-            pw_hash = bcrypt.generate_password_hash('RazanIsAdmin').decode('utf-8')
-            key_hash = bcrypt.generate_password_hash('RD_Cafe_2024').decode('utf-8')
-            admin = Admin(email='rjndkl1224@gmail.com', password_hash=pw_hash, secret_key_hash=key_hash)
-            db.session.add(admin)
-            db.session.commit()
-            print("Admin user created.")
-        else:
-            print("Admin user already exists.")
-        print("Database initialized.")
-
     return app
 
 # ==========================================================
 # This is needed for Gunicorn to find the app
 # ==========================================================
 app = create_app()
+
+# =========================================================================
+# >> TEMPORARY DEPLOYMENT HACK <<
+# This code runs ONCE when the server starts. REMOVE IT after first success.
+# =========================================================================
+with app.app_context():
+    print("Executing one-time database setup...")
+    db.create_all()
+    if not Admin.query.filter_by(email='rjndkl1224@gmail.com').first():
+        print("Admin user not found, creating one...")
+        pw_hash = bcrypt.generate_password_hash('RazanIsAdmin').decode('utf-8')
+        key_hash = bcrypt.generate_password_hash('RD_Cafe_2024').decode('utf-8')
+        new_admin = Admin(email='rjndkl1224@gmail.com', password_hash=pw_hash, secret_key_hash=key_hash)
+        db.session.add(new_admin)
+        db.session.commit()
+        print("Admin user created successfully!")
+    else:
+        print("Admin user already exists.")
+    print("One-time setup finished.")
