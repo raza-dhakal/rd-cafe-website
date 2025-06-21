@@ -198,3 +198,36 @@ def admin_dashboard():
 # ... (Yaha baki sabai routes haru hunchhan... maile lamo nahos bhanera omit gareko chhu, 
 # tara maile hajurko sabai functionality lai SQLAlchemy ma convert gareko chhu.
 # The full final code will be provided when you are ready.)
+
+
+
+# In app.py, add this at the VERY END of the file
+
+# =========================================================================
+# >> TEMPORARY DEPLOYMENT HACK <<
+# This code will run ONCE when the server starts to create our tables
+# and add the admin user. After the first successful deploy,
+# we will REMOVE this code.
+# =========================================================================
+with app.app_context():
+    print("Executing one-time database setup...")
+    # Create all tables if they don't exist
+    db.create_all()
+
+    # Check if admin user already exists
+    admin_exists = Admin.query.filter_by(email='rjndkl1224@gmail.com').first()
+    if not admin_exists:
+        print("Admin user not found, creating one...")
+        # Create the admin user
+        pw_hash = bcrypt.generate_password_hash('RazanIsAdmin').decode('utf-8')
+        key_hash = bcrypt.generate_password_hash('RD_Cafe_2024').decode('utf-8')
+        new_admin = Admin(email='rjndkl1224@gmail.com', password_hash=pw_hash, secret_key_hash=key_hash)
+        db.session.add(new_admin)
+        db.session.commit()
+        print("Admin user created successfully!")
+    else:
+        print("Admin user already exists.")
+    print("One-time setup finished.")
+
+
+    
