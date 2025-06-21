@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - RD Cafe{% endblock %}
+{% block content %}
+<section class="container content-section">
+    <h1 class="section-title">Welcome, {{ session.username }}!</h1>
+    <div class="dashboard-content">
+        <p>This is your personal dashboard. From here, you can view your order history, manage your profile, and more.</p>
+        <a href="{{ url_for('menu') }}" class="btn-primary">View Menu</a>
+        <a href="{{ url_for('logout') }}" class="btn-secondary" style="border-color: #e4d5b7; color: #333;">Logout</a>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Admin Login - RD Cafe{% endblock %}
+{% block content %}
+<div class="form-container">
+    <form {{ csrf_token() }}
+        method="POST" action="/admin/login" class="auth-form">
+        
+        <h2>Admin Panel Login</h2>
+        {% include '_flash_messages.html' %}
+        <div class="form-group">
+            <label for="email">Admin Email</label>
+            <input type="email" id="email" name="email" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="secret_key">Secret Key</label>
+            <input type="password" id="secret_key" name="secret_key" class="form-control" required>
+        </div>
+        <button type="submit" class="btn-primary auth-btn">Request PIN</button>
+    </form>
+</div>
+{% endblock %}

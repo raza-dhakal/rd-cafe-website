@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}RD Cafe{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <a href="{{ url_for('home') }}" class="nav-logo">RD Cafe</a>
+            
+            <ul class="nav-menu">
+                <!-- === Main Navigation Links === -->
+                <li class="nav-item"><a href="{{ url_for('home') }}" class="nav-link">Home</a></li>
+                <li class="nav-item"><a href="{{ url_for('menu') }}" class="nav-link">Menu</a></li>
+                <li class="nav-item"><a href="{{ url_for('order') }}" class="nav-link">Order Now</a></li>
+                <li class="nav-item"><a href="{{ url_for('owner_info') }}" class="nav-link">About</a></li> <!-- Changed "About Us" to "About" -->
+                
+                <!-- === Dynamic Links for User Login/Logout === -->
+                {% if session.logged_in %}
+                    <li class="nav-item"><a href="{{ url_for('dashboard') }}" class="nav-link">Dashboard</a></li>
+                    <li class="nav-item"><a href="{{ url_for('logout') }}" class="nav-link">Logout</a></li>
+                {% else %}
+                    <li class="nav-item"><a href="{{ url_for('login') }}" class="nav-link">Login</a></li>
+                    <li class="nav-item"><a href="{{ url_for('signup') }}" class="nav-link btn-nav">Sign Up</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Flash messages will be shown here -->
+        {% include '_flash_messages.html' %}
+        
+        <!-- Content for each specific page will be injected here -->
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <p>© 2024 RD Cafe by Rajan Dhakal. All rights reserved.</p>
+    </footer>
+</body>
+</html>

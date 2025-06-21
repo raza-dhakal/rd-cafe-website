@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}About the Owner - RD Cafe{% endblock %}
+{% block content %}
+<section class="container content-section">
+    <h1 class="section-title">About the Owner</h1>
+    
+    <div class="owner-container">
+        <!-- Profile Picture -->
+        <div class="owner-photo">
+            <!-- Replace with your actual photo in static/images/ -->
+            <img src="{{ url_for('static', filename='images/rajan_dhakal.jpg') }}" alt="Rajan Dhakal">
+        </div>
+
+        <!-- Bio and Language Tabs -->
+        <div class="owner-bio">
+            <h2 class="owner-name">Rajan Dhakal</h2>
+            
+            <div class="language-tabs">
+                <button class="tab-link active" onclick="openLang(event, 'English')">English</button>
+                <button class="tab-link" onclick="openLang(event, 'Nepali')">नेपाली</button>
+                <button class="tab-link" onclick="openLang(event, 'Japanese')">日本語</button>
+            </div>
+
+            <!-- English Content -->
+            <div id="English" class="tab-content" style="display:block;">
+                <h3>Founder & Barista</h3>
+                <p>
+                    Welcome to RD Cafe! I'm Rajan Dhakal, the founder and passionate coffee enthusiast behind this project. My journey started with a simple love for the perfect cup of coffee and a dream to create a space where people can connect, relax, and enjoy high-quality beverages.
+                </p>
+                <p>
+                    Having spent time in Japan, I was deeply inspired by their dedication to precision, quality, and minimalist aesthetics ('shibui'). I've brought that same philosophy to RD Cafe, ensuring that every bean is perfectly roasted and every cup is brewed with care. This website is the digital extension of that dream, built with the same attention to detail using Python and Flask. Thank you for visiting, and I hope you enjoy your experience!
+                </p>
+            </div>
+
+            <!-- Nepali Content -->
+            <div id="Nepali" class="tab-content">
+                <h3>संस्थापक र बरिस्ता</h3>
+                <p>
+                    आरडी क्याफेमा स्वागत छ! म राजन ढकाल, यस परियोजना पछाडिको संस्थापक र एक उत्साही कफी प्रेमी हुँ। मेरो यात्रा एक उत्तम कप कफीप्रतिको साधारण प्रेम र एउटा यस्तो ठाउँ सिर्जना गर्ने सपनाबाट सुरु भयो जहाँ मानिसहरूले आराम गर्न, भेटघाट गर्न र उच्च-गुणस्तरको पेय पदार्थको आनन्द लिन सक्छन्।
+                </p>
+                <p>
+                    जापानमा समय बिताउँदा, म त्यहाँको गुणस्तर, र सौन्दर्य प्रतिको समर्पणबाट गहिरो रूपमा प्रभावित भएँ। मैले त्यही दर्शनलाई आरडी क्याफेमा ल्याएको छु, जहाँ प्रत्येक कप कफीलाई होसियारीपूर्वक बनाइन्छ। यो वेबसाइट त्यही सपनाको डिजिटल विस्तार हो, जसलाई पाइथन र फ्लास्क प्रयोग गरेर उहीँ ध्यान दिएर बनाइएको छ। भ्रमणको लागि धन्यवाद, र आशा छ तपाईंले आफ्नो अनुभवको आनन्द लिनुहुनेछ!
+                </p>
+            </div>
+
+            <!-- Japanese Content -->
+            <div id="Japanese" class="tab-content">
+                <h3>創設者・バリスタ</h3>
+                <p>
+                    RDカフェへようこそ！私が創設者であり、情熱的なコーヒー愛好家であるラジャン・ダカルです。私の旅は、完璧な一杯のコーヒーへの単純な愛情と、人々が繋がり、リラックスし、高品質の飲み物を楽しめる空間を作りたいという夢から始まりました。
+                </p>
+                <p>
+                    日本で過ごした時間の中で、その精密さ、品質、そしてミニマリストの美学（渋い）へのこだわりに深く感銘を受けました。私はその哲学をRDカフェにもたらし、すべての一杯が丁寧に淹れられることを保証します。このウェブサイトはその夢のデジタル版であり、PythonとFlaskを使用して同じように細部にまでこだわって構築されています。ご来店いただきありがとうございます。どうぞごゆっくりお楽しみください！
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+function openLang(evt, langName) {
+  // Declare all variables
+  var i, tabcontent, tablinks;
+
+  // Get all elements with class="tab-content" and hide them
+  tabcontent = document.getElementsByClassName("tab-content");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+
+  // Get all elements with class="tab-link" and remove the class "active"
+  tablinks = document.getElementsByClassName("tab-link");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+
+  // Show the current tab, and add an "active" class to the button that opened the tab
+  document.getElementById(langName).style.display = "block";
+  evt.currentTarget.className += " active";
+}
+</script>
+{% endblock %}

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>View Users - Admin</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="{{ url_for('admin_dashboard') }}" class="nav-logo">RD Cafe Admin</a>
+        <ul class="nav-menu">
+            <li class="nav-item"><a href="{{ url_for('admin_dashboard') }}" class="nav-link">Manage Menu</a></li>
+            <li class="nav-item"><a href="{{ url_for('admin_view_orders') }}" class="nav-link">View Orders</a></li>
+            <li class="nav-item"><a href="{{ url_for('admin_view_users') }}" class="nav-link active">View Users</a></li>
+            <li class="nav-item"><a href="{{ url_for('admin_otp_logs') }}" class="nav-link">OTP Logs</a></li>
+            <li class="nav-item"><a href="{{ url_for('admin_logout') }}" class="nav-link btn-nav">Logout</a></li>
+        </ul>
+    </nav>
+
+    <main class="container">
+        {% include '_flash_messages.html' %}
+        <div class="admin-header">
+            <h1 class="section-title" style="margin-top: 40px;">Registered Users</h1>
+        </div>
+
+        <div class="admin-table-container">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>User ID</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Date Registered</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if users %}
+                        {% for user in users %}
+                        <tr>
+                            <td data-label="User ID">#{{ user.id }}</td>
+                            <td data-label="Username">{{ user.username }}</td>
+                            <td data-label="Email">{{ user.email }}</td>
+                            <td data-label="Date">{{ user.created_at.strftime('%Y-%m-%d') }}</td>
+                            <td data-label="Actions">
+                                <!-- Future feature: Reset Password -->
+                                <a href="{{ url_for('admin_reset_user_password', user_id=user.id) }}" class="btn-action btn-edit">Reset Password</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="5" style="text-align: center;">No users have registered yet.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </main>
+</body>
+</html>

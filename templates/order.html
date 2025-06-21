@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Order Now - RD Cafe{% endblock %}
+{% block content %}
+<section class="container content-section">
+    <div class="form-container" style="max-width: 600px;">
+        <form  {{ csrf_token() }}
+            method="POST" action="{{ url_for('order') }}" class="auth-form">
+           
+            <h2 class="section-title" style="margin-bottom: 30px; font-size: 2.5rem;">Place Your Order</h2>
+            {% include '_flash_messages.html' %}
+            <div class="form-group">
+                <label for="customer_name">Your Name</label>
+                <input type="text" id="customer_name" name="customer_name" class="form-control" 
+                       value="{{ session.username if session.logged_in else '' }}" required>
+            </div>
+            <div class="form-group">
+                <label for="menu_item">Select Your Item</label>
+                <select id="menu_item" name="menu_item_id" class="form-control" required>
+                    <option value="" disabled selected>-- Choose from our menu --</option>
+                    {% for item in menu_items %}
+                        <option value="{{ item.id }}">{{ item.name }} - (Rs. {{ "%.2f"|format(item.price) }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="quantity">Quantity</label>
+                <input type="number" id="quantity" name="quantity" class="form-control" value="1" min="1" required>
+            </div>
+            <div class="form-group">
+                <label for="payment_method">Payment Method</label>
+                <select id="payment_method" name="payment_method" class="form-control" required>
+                    <option value="Cash on Delivery">Cash on Delivery</option>
+                    <option value="Esewa">Esewa</option>
+                    <option value="Khalti">Khalti</option>
+                </select>
+            </div>
+            <button type="submit" class="btn-primary auth-btn">Place Order</button>
+        </form>
+    </div>
+</section>
+{% endblock %}

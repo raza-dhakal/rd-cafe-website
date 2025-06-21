@@ -1,0 +1,48 @@
+<!-- menu.html -->
+{% extends "base.html" %}
+
+{% block title %}Our Menu - RD Cafe{% endblock %}
+
+{% block content %}
+<section class="container menu-page-section">
+    <h1 class="section-title">Explore Our Full Menu</h1>
+    
+    {% if menu_items %}
+        <!-- 
+            IMPORTANT: Yo groupby logic 100% sahi chha.
+            Yesle 'category' ko adhar ma group banauchha.
+        -->
+        {% for group in menu_items|groupby('category') %}
+            <div class="menu-category">
+                <!-- group.grouper le category ko naam (e.g., 'Hot Coffee') dinchha -->
+                <h2 class="menu-category-title">{{ group.grouper }}</h2>
+                <div class="menu-grid">
+                    <!-- group.list le tyo category ko sabai item haru dinchha -->
+                    {% for item in group.list %}
+                    <div class="menu-card">
+                        <div class="card-image-container">
+                            <img src="{{ url_for('static', filename='images/' + item.image_url) }}" 
+                                 alt="{{ item.name }}" 
+                                 class="card-image"
+                                 onerror="this.onerror=null;this.src='{{ url_for('static', filename='images/placeholder.jpg') }}';">
+                        </div>
+                        <div class="card-content">
+                            <h3 class="card-title">{{ item.name }}</h3>
+                            <p class="card-description">{{ item.description }}</p>
+                            <div class="card-footer">
+                                <span class="card-price">Rs. {{ "%.2f"|format(item.price) }}</span>
+                                <button class="add-to-cart-btn">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p class="text-center" style="padding: 40px; font-size: 1.2rem;">
+            Sorry, our menu is currently empty or there was a problem fetching it.
+        </p>
+    {% endif %}
+</section>
+{% endblock %}

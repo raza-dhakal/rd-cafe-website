@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome to RD Cafe{% endblock %}
+
+{% block content %}
+<!-- 1. Hero Section -->
+<section class="hero">
+    <div class="hero-content">
+        <h1 class="hero-title">Where Every Sip Tells a Story</h1>
+        <p class="hero-subtitle">Experience the finest coffee, curated wines, and delectable cakes in a cozy ambiance.</p>
+        <a href="/menu" class="btn-primary">View Our Menu</a>
+    </div>
+</section>
+
+<!-- 2. Specialties Section -->
+<section class="container content-section">
+    <h2 class="section-title">Our Specialties</h2>
+    <div class="specialties-grid">
+        <!-- Item 1: RD Coffee -->
+        <div class="specialty-card">
+            <img src="{{ url_for('static', filename='images/hot-latte.jpg') }}" alt="RD Special Coffee" class="specialty-img">
+            <h3>RD Special Coffee</h3>
+            <p>Our signature blend, rich and aromatic, crafted with hand-picked beans from the Himalayas.</p>
+        </div>
+        <!-- Item 2: Lava Cake -->
+        <div class="specialty-card">
+            <img src="{{ url_for('static', filename='images/lava-cake.jpg') }}" alt="Lava Cake" class="specialty-img">
+            <h3>Molten Lava Cake</h3>
+            <p>A decadent chocolate cake with a warm, gooey center that melts in your mouth.</p>
+        </div>
+        <!-- Item 3: RD Wine -->
+        <div class="specialty-card">
+            <img src="{{ url_for('static', filename='images/red-wine.jpg') }}" alt="RD Fine Wine" class="specialty-img">
+            <h3>RD Fine Wine</h3>
+            <p>A carefully selected red wine that pairs perfectly with our menu and your mood.</p>
+        </div>
+    </div>
+</section>
+
+<!-- 3. Offers Section -->
+<section class="container content-section offers-section">
+    <h2 class="section-title">Exclusive Offers</h2>
+    <div class="offers-grid">
+        <div class="offer-card">
+            <h3>Student Discount</h3>
+            <p>Show your valid student ID and get a <strong>15% discount</strong> on your total bill. We support your hard work!</p>
+        </div>
+        <div class="offer-card">
+            <h3>Senior's Privilege</h3>
+            <p>For our respected guests aged 70 and above, we offer a <strong>20% discount</strong> as a token of our gratitude.</p>
+        </div>
+    </div>
+</section>
+
+<!-- 4. Loyalty Program Banner -->
+<section class="loyalty-banner">
+    <div class="container">
+        <h2>Join the RD Cafe Club!</h2>
+        <p>Get a point card, earn rewards, and enjoy exclusive coupons. Sign up today!</p>
+        <a href="#" class="btn-secondary">Get Your Point Card</a>
+    </div>
+</section>
+{% endblock %}

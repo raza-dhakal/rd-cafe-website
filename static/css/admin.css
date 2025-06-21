@@ -1,0 +1,158 @@
+/* static/css/admin.css */
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.admin-header .section-title {
+  margin-bottom: 0;
+}
+
+.admin-table-container {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  overflow-x: auto; /* For very small screens */
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-table th, .admin-table td {
+  padding: 15px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+  vertical-align: middle;
+}
+
+.admin-table thead {
+  background-color: #f9f8f7;
+}
+
+.admin-table th {
+  font-weight: 600;
+  color: #333;
+  white-space: nowrap;
+}
+
+.table-img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.btn-action {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-right: 5px;
+  margin-bottom: 5px; /* For responsive view */
+  transition: all 0.2s ease;
+  border: none;
+  cursor: pointer;
+  text-align: center;
+}
+
+.btn-edit {
+  background-color: #17a2b8;
+  color: white;
+}
+.btn-edit:hover {
+  background-color: #138496;
+}
+
+.btn-delete {
+  background-color: #dc3545;
+  color: white;
+}
+.btn-delete:hover {
+  background-color: #c82333;
+}
+
+.nav-link.active {
+  color: #e4d5b7;
+  font-weight: 700;
+}
+
+/* Responsive Table */
+@media screen and (max-width: 768px) {
+  .admin-table thead {
+      display: none;
+  }
+  .admin-table, .admin-table tbody, .admin-table tr, .admin-table td {
+      display: block;
+      width: 100%;
+  }
+  .admin-table tr {
+      margin-bottom: 15px;
+      border: 1px solid #eee;
+      border-radius: 8px;
+      padding: 10px;
+  }
+  .admin-table td {
+      text-align: right;
+      padding-left: 50%;
+      position: relative;
+      border-bottom: 0;
+  }
+  .admin-table td::before {
+      content: attr(data-label);
+      position: absolute;
+      left: 15px;
+      width: 45%;
+      padding-right: 10px;
+      text-align: left;
+      font-weight: 600;
+  }
+}
+/* In static/css/admin.css, add this at the end */
+
+.status-badge {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+.status-pending {
+  background-color: #ffc107; /* Yellow */
+  color: #333;
+}
+
+.status-completed {
+  background-color: #28a745; /* Green */
+}
+
+.status-cancelled {
+  background-color: #dc3545; /* Red */
+}
+
+/* In static/css/admin.css, add this at the end */
+
+.btn-complete {
+  background-color: #28a745; /* Green */
+  color: white;
+}
+.btn-complete:hover {
+  background-color: #218838;
+}
+
+.btn-cancel {
+  background-color: #dc3545; /* Red */
+  color: white;
+}
+.btn-cancel:hover {
+  background-color: #c82333;
+}

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>OTP Logs - Admin</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="{{ url_for('admin_dashboard') }}" class="nav-logo">RD Cafe Admin</a>
+        <ul class="nav-menu">
+            <li class="nav-item"><a href="{{ url_for('admin_dashboard') }}" class="nav-link">Manage Menu</a></li>
+            <li class="nav-item"><a href="{{ url_for('admin_view_orders') }}" class="nav-link">View Orders</a></li>
+            <li class="nav-item"><a href="{{ url_for('admin_view_users') }}" class="nav-link">View Users</a></li>
+            <li class="nav-item"><a href="{{ url_for('admin_otp_logs') }}" class="nav-link active">OTP Logs</a></li>
+            <li class="nav-item"><a href="{{ url_for('admin_logout') }}" class="nav-link btn-nav">Logout</a></li>
+        </ul>
+    </nav>
+
+    <main class="container">
+        {% include '_flash_messages.html' %}
+        <div class="admin-header">
+            <h1 class="section-title" style="margin-top: 40px;">Admin Login OTP History</h1>
+        </div>
+
+        <div class="admin-table-container">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Log ID</th>
+                        <th>Admin Email</th>
+                        <th>OTP Code</th>
+                        <th>Date & Time</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if logs %}
+                        {% for log in logs %}
+                        <tr>
+                            <td data-label="Log ID">#{{ log.id }}</td>
+                            <td data-label="Email">{{ log.admin_email }}</td>
+                            <td data-label="OTP">{{ log.otp_code }}</td>
+                            <td data-label="Date">{{ log.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                            <td data-label="Status">
+                                {% if log.is_used %}
+                                    <span class="status-badge status-completed">Used</span>
+                                {% else %}
+                                    <span class="status-badge status-pending">Not Used</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="5" style="text-align: center;">No OTP logs found.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </main>
+</body>
+</html>
