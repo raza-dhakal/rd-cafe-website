@@ -15,45 +15,35 @@ from flask_wtf.csrf import CSRFProtect
 from flask_dance.contrib.google import make_google_blueprint, google
 from flask_dance.consumer import oauth_authorized
 from werkzeug.utils import secure_filename
-
-# ==============================================================================
-# >> DEPLOYMENT CHANGE 1: Import SQLAlchemy <<
-# Hami `flask_mysqldb` ko satta `flask_sqlalchemy` use garchhau
-# ==============================================================================
 from flask_sqlalchemy import SQLAlchemy
 
 # ==============================================================================
 # SECTION 2: INITIAL SETUP AND CONFIGURATION
-# App lai initialize garne ra .env file bata sabai settings load garne
 # ==============================================================================
 load_dotenv()
 app = Flask(__name__)
 
-# CSRF Protection ko lagi
+# Security and General Config
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'default_fallback_secret_key_for_rd_cafe')
 csrf = CSRFProtect(app)
-
-# Google OAuth ko lagi
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
-# Image upload ko lagi
+# Image Upload Config
 UPLOAD_FOLDER = 'static/images'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-# ==============================================================================
-# >> DEPLOYMENT CHANGE 2: Database Configuration <<
-# Yo code le check garchha: yedi 'DATABASE_URL' (Render le dine URL) chha bhane,
-# tyo use garne, natra local development ko lagi puranai .env bata line
-# ==============================================================================
+# Database Config for Render (PostgreSQL) and Local (MySQL)
 database_url = os.getenv("DATABASE_URL")
 if database_url and database_url.startswith("postgres://"):
-    # Render ko PostgreSQL URL lai SQLAlchemy ko format ma change garne
     database_url = database_url.replace("postgres://", "postgresql://", 1)
-app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+    app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+else:
+    # Fallback to local MySQL for development
+    app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql+pymysql://{os.getenv('MYSQL_USER')}:{os.getenv('MYSQL_PASSWORD')}@{os.getenv('MYSQL_HOST')}/{os.getenv('MYSQL_DB')}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Mail Configuration (jastai ko testai)
+# Mail Config
 app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER')
 app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT', 587))
 app.config['MAIL_USE_TLS'] = os.getenv('MAIL_USE_TLS', 'true').lower() in ['true', '1', 't']
@@ -63,26 +53,12 @@ app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
 app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_USERNAME')
 
 # ==============================================================================
-# SECTION 3: INITIALIZE EXTENSIONS
-# Sabai Flask extensions haru lai initialize garne
+# SECTION 3: INITIALIZE EXTENSIONS & DEFINE DATABASE MODELS
 # ==============================================================================
-db = SQLAlchemy(app) # Naya SQLAlchemy object
+db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 mail = Mail(app)
 
-# Google OAuth Blueprint (jastai ko testai)
-google_blueprint = make_google_blueprint(
-    client_id=os.getenv("GOOGLE_OAUTH_CLIENT_ID"),
-    client_secret=os.getenv("GOOGLE_OAUTH_CLIENT_SECRET"),
-    scope=["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email", "openid"]
-)
-app.register_blueprint(google_blueprint)
-
-# ==============================================================================
-# >> DEPLOYMENT CHANGE 3: Define Database Models <<
-# SQLAlchemy ko lagi, hami table lai Python class ko rup ma define garchhau.
-# Yesle code lai dherai clean banauchha ra MySQL/PostgreSQL dubai sanga kaam garchha.
-# ==============================================================================
 class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
@@ -97,7 +73,7 @@ class Menu(db.Model):
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text)
     price = db.Column(db.Numeric(10, 2), nullable=False)
-    image_url = db.Column(db.String(255), nullable=False)
+    image_url = db.Column(db.String(255))
     category = db.Column(db.String(50), default='Coffee')
 
 class Order(db.Model):
@@ -110,9 +86,7 @@ class Order(db.Model):
     order_status = db.Column(db.String(50), default='Pending')
     order_date = db.Column(db.TIMESTAMP, server_default=db.func.current_timestamp())
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
-    # Relationships
     menu_item = db.relationship('Menu', backref='orders')
-    user = db.relationship('User', backref='orders')
 
 class Admin(db.Model):
     __tablename__ = 'admin'
@@ -129,96 +103,267 @@ class OtpLog(db.Model):
     created_at = db.Column(db.TIMESTAMP, server_default=db.func.current_timestamp())
     is_used = db.Column(db.Boolean, default=False)
 
-# ==============================================================================
-# >> DEPLOYMENT CHANGE 4: Create Tables Command <<
-# Yo command le hami lai Render ko server ma table haru banauna maddat garchha
-# ==============================================================================
-@app.cli.command("create-db")
-def create_db():
-    """Creates all database tables."""
-    with app.app_context():
-        db.create_all()
-    print("Database tables created!")
+# Google OAuth Blueprint
+google_blueprint = make_google_blueprint(client_id=os.getenv("GOOGLE_OAUTH_CLIENT_ID"), client_secret=os.getenv("GOOGLE_OAUTH_CLIENT_SECRET"), scope=["profile", "email"])
+app.register_blueprint(google_blueprint, url_prefix="/login")
 
 # --- Helper Functions ---
-def generate_otp(length=6):
-    return ''.join(random.choices(string.digits, k=length))
-
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+def generate_otp(length=6): return ''.join(random.choices(string.digits, k=length))
+def allowed_file(filename): return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 # ==============================================================================
 # SECTION 4: ROUTES
-# Sabai page routes haru. Maile `cur.execute` lai SQLAlchemy ko query le replace gareko chhu.
 # ==============================================================================
 
 # --- Public & User Routes ---
 @app.route('/')
-def home():
-    return render_template('home.html')
+def home(): return render_template('home.html')
 
 @app.route('/menu')
 def menu():
     menu_items = Menu.query.order_by(Menu.category, Menu.id).all()
     return render_template('menu.html', menu_items=menu_items)
 
+@app.route('/owner-info')
+def owner_info(): return render_template('owner_info.html')
+
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
-        username = request.form['username']
-        email = request.form['email']
-        password = request.form['password']
-        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-        
-        # Check if user already exists
-        existing_user = User.query.filter_by(email=email).first()
-        if existing_user:
+        username, email, password = request.form['username'], request.form['email'], request.form['password']
+        if User.query.filter_by(email=email).first():
             flash('This email is already registered.', 'danger')
             return redirect(url_for('signup'))
-            
-        new_user = User(username=username, email=email, password_hash=hashed_password)
+        new_user = User(username=username, email=email, password_hash=bcrypt.generate_password_hash(password).decode('utf-8'))
         db.session.add(new_user)
         db.session.commit()
-        
-        flash('Your account has been created! You can now log in.', 'success')
+        flash('Your account has been created!', 'success')
         return redirect(url_for('login'))
     return render_template('signup.html')
 
-# ... (baki sabai routes haru lai pani SQLAlchemy ko tarikale update gareko chha) ...
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email, password = request.form['email'], request.form['password']
+        user = User.query.filter_by(email=email).first()
+        if user and bcrypt.check_password_hash(user.password_hash, password):
+            session['logged_in'], session['user_id'], session['username'] = True, user.id, user.username
+            flash('You have been logged in!', 'success')
+            return redirect(url_for('dashboard'))
+        else:
+            flash('Login Unsuccessful. Check email and password.', 'danger')
+    return render_template('login.html')
+
+@oauth_authorized.connect_via(google_blueprint)
+def google_logged_in(blueprint, token):
+    if not token:
+        flash("Failed to log in with Google.", "danger")
+        return False
+    resp = blueprint.session.get("/oauth2/v2/userinfo")
+    if not resp.ok: return False
+    info = resp.json()
+    user = User.query.filter_by(email=info['email']).first()
+    if not user:
+        unusable_pass = bcrypt.generate_password_hash(os.urandom(16)).decode('utf-8')
+        user = User(email=info['email'], username=info['name'], password_hash=unusable_pass)
+        db.session.add(user)
+        db.session.commit()
+        flash(f"Welcome, {info['name']}! Your account has been created.", "success")
+    session['logged_in'], session['user_id'], session['username'] = True, user.id, user.username
+    flash("Successfully logged in with Google!", "success")
+    return False
+
+@app.route('/dashboard')
+def dashboard():
+    if 'logged_in' not in session: return redirect(url_for('login'))
+    return render_template('dashboard.html')
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    flash('You have been logged out.', 'success')
+    return redirect(url_for('home'))
+
+@app.route('/order', methods=['GET', 'POST'])
+def order():
+    menu_items = Menu.query.with_entities(Menu.id, Menu.name, Menu.price).order_by(Menu.name).all()
+    if request.method == 'POST':
+        new_order = Order(
+            customer_name=request.form['customer_name'],
+            menu_item_id=request.form['menu_item_id'],
+            quantity=request.form['quantity'],
+            payment_method=request.form['payment_method'],
+            user_id=session.get('user_id')
+        )
+        db.session.add(new_order)
+        db.session.commit()
+        flash('Your order has been placed successfully!', 'success')
+        return redirect(url_for('menu'))
+    return render_template('order.html', menu_items=menu_items)
 
 # --- Admin Routes ---
+@app.route('/admin/login', methods=['GET', 'POST'])
+def admin_login():
+    if request.method == 'POST':
+        email, password, secret_key = request.form['email'], request.form['password'], request.form['secret_key']
+        admin = Admin.query.filter_by(email=email).first()
+        if admin and bcrypt.check_password_hash(admin.password_hash, password) and bcrypt.check_password_hash(admin.secret_key_hash, secret_key):
+            otp_code = generate_otp()
+            try:
+                msg = Message("Your RD Cafe Admin Login PIN", recipients=[admin.email], body=f"Your one-time PIN is: {otp_code}")
+                mail.send(msg)
+                new_otp = OtpLog(admin_email=admin.email, otp_code=otp_code)
+                db.session.add(new_otp)
+                db.session.commit()
+                session['admin_email_for_otp_verification'] = admin.email
+                flash('A PIN code has been sent to your email.', 'info')
+                return redirect(url_for('admin_verify_otp'))
+            except Exception as e:
+                flash(f'Failed to send email. Error: {e}', 'danger')
+        else:
+            flash('Invalid credentials.', 'danger')
+    return render_template('admin_login.html')
+
+@app.route('/admin/verify-otp', methods=['GET', 'POST'])
+def admin_verify_otp():
+    if 'admin_email_for_otp_verification' not in session: return redirect(url_for('admin_login'))
+    if request.method == 'POST':
+        user_otp, admin_email = request.form['otp'], session['admin_email_for_otp_verification']
+        five_minutes_ago = datetime.utcnow() - timedelta(minutes=5)
+        valid_otp = OtpLog.query.filter(OtpLog.admin_email == admin_email, OtpLog.otp_code == user_otp, OtpLog.is_used == False, OtpLog.created_at > five_minutes_ago).first()
+        if valid_otp:
+            valid_otp.is_used = True
+            db.session.commit()
+            session.pop('admin_email_for_otp_verification', None)
+            session['admin_logged_in'], session['admin_email'] = True, admin_email
+            flash('Verification successful!', 'success')
+            return redirect(url_for('admin_dashboard'))
+        else:
+            flash('Invalid or expired PIN.', 'danger')
+            return redirect(url_for('admin_login'))
+    return render_template('admin_verify_otp.html')
+
 @app.route('/admin/dashboard')
 def admin_dashboard():
-    if 'admin_logged_in' not in session:
-        return redirect(url_for('admin_login'))
-    
+    if 'admin_logged_in' not in session: return redirect(url_for('admin_login'))
     menu_items = Menu.query.order_by(Menu.category, Menu.id).all()
     return render_template('admin_dashboard.html', menu_items=menu_items)
-    
-# ... (Yaha baki sabai routes haru hunchhan... maile lamo nahos bhanera omit gareko chhu, 
-# tara maile hajurko sabai functionality lai SQLAlchemy ma convert gareko chhu.
-# The full final code will be provided when you are ready.)
 
+@app.route('/admin/logout')
+def admin_logout():
+    session.pop('admin_logged_in', None)
+    session.pop('admin_email', None)
+    flash('Logged out from admin panel.', 'success')
+    return redirect(url_for('admin_login'))
 
+@app.route('/admin/menu/add', methods=['GET', 'POST'])
+def add_menu_item():
+    if 'admin_logged_in' not in session: return redirect(url_for('admin_login'))
+    if request.method == 'POST':
+        file = request.files.get('image')
+        if not file or file.filename == '' or not allowed_file(file.filename):
+            flash('Valid image file is required.', 'danger')
+            return redirect(request.url)
+        ext = file.filename.rsplit('.', 1)[1].lower()
+        filename = secure_filename(str(uuid.uuid4()) + '.' + ext)
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        new_item = Menu(name=request.form['name'], description=request.form['description'], price=request.form['price'], category=request.form['category'], image_url=filename)
+        db.session.add(new_item)
+        db.session.commit()
+        flash('New menu item added!', 'success')
+        return redirect(url_for('admin_dashboard'))
+    return render_template('add_menu.html')
 
-# In app.py, add this at the VERY END of the file
+@app.route('/admin/menu/edit/<int:item_id>', methods=['GET', 'POST'])
+def edit_menu_item(item_id):
+    if 'admin_logged_in' not in session: return redirect(url_for('admin_login'))
+    item = Menu.query.get_or_404(item_id)
+    if request.method == 'POST':
+        item.name, item.description, item.price, item.category = request.form['name'], request.form['description'], request.form['price'], request.form['category']
+        file = request.files.get('image')
+        if file and file.filename != '' and allowed_file(file.filename):
+            # Delete old image and save new one
+            if item.image_url and os.path.exists(os.path.join(app.config['UPLOAD_FOLDER'], item.image_url)):
+                os.remove(os.path.join(app.config['UPLOAD_FOLDER'], item.image_url))
+            ext = file.filename.rsplit('.', 1)[1].lower()
+            filename = secure_filename(str(uuid.uuid4()) + '.' + ext)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            item.image_url = filename
+        db.session.commit()
+        flash('Menu item updated!', 'success')
+        return redirect(url_for('admin_dashboard'))
+    return render_template('edit_menu.html', item=item)
 
-# =========================================================================
+@app.route('/admin/menu/delete/<int:item_id>', methods=['POST'])
+def delete_menu_item(item_id):
+    if 'admin_logged_in' not in session: return redirect(url_for('admin_login'))
+    item = Menu.query.get_or_404(item_id)
+    # Delete image file
+    if item.image_url and os.path.exists(os.path.join(app.config['UPLOAD_FOLDER'], item.image_url)):
+        os.remove(os.path.join(app.config['UPLOAD_FOLDER'], item.image_url))
+    db.session.delete(item)
+    db.session.commit()
+    flash('Menu item deleted.', 'success')
+    return redirect(url_for('admin_dashboard'))
+
+@app.route('/admin/orders')
+def admin_view_orders():
+    if 'admin_logged_in' not in session: return redirect(url_for('admin_login'))
+    orders = db.session.query(Order.order_id, Order.customer_name, Menu.name.label('menu_item_name'), Order.quantity, Order.payment_method, Order.order_status, Order.order_date).join(Menu).order_by(Order.order_date.desc()).all()
+    return render_template('admin_orders.html', orders=orders)
+
+@app.route('/admin/order/update/<int:order_id>', methods=['POST'])
+def admin_update_order_status(order_id):
+    if 'admin_logged_in' not in session: return redirect(url_for('admin_login'))
+    order = Order.query.get_or_404(order_id)
+    new_status = request.form.get('status')
+    if new_status in ['Completed', 'Cancelled']:
+        order.order_status = new_status
+        db.session.commit()
+        flash(f'Order #{order_id} updated to "{new_status}".', 'success')
+    else:
+        flash('Invalid status.', 'danger')
+    return redirect(url_for('admin_view_orders'))
+
+@app.route('/admin/users')
+def admin_view_users():
+    if 'admin_logged_in' not in session: return redirect(url_for('admin_login'))
+    users = User.query.order_by(User.created_at.desc()).all()
+    return render_template('admin_view_users.html', users=users)
+
+@app.route('/admin/user/reset/<int:user_id>', methods=['GET', 'POST'])
+def admin_reset_user_password(user_id):
+    if 'admin_logged_in' not in session: return redirect(url_for('admin_login'))
+    user = User.query.get_or_404(user_id)
+    if request.method == 'POST':
+        new_password = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
+        user.password_hash = bcrypt.generate_password_hash(new_password).decode('utf-8')
+        db.session.commit()
+        try:
+            msg = Message("Your RD Cafe Password Has Been Reset", recipients=[user.email], body=f"An admin has reset your password.\n\nYour new temporary password is: {new_password}\n\nPlease log in and change it.")
+            mail.send(msg)
+            flash(f"Password for {user.email} has been reset and sent.", 'success')
+        except Exception as e:
+            flash(f'Password reset but failed to send email: {e}', 'warning')
+        return redirect(url_for('admin_view_users'))
+    return render_template('admin_reset_password.html', user=user)
+
+@app.route('/admin/otp-logs')
+def admin_otp_logs():
+    if 'admin_logged_in' not in session: return redirect(url_for('admin_login'))
+    logs = OtpLog.query.order_by(OtpLog.created_at.desc()).all()
+    return render_template('admin_otp_logs.html', logs=logs)
+
+# ==============================================================================
 # >> TEMPORARY DEPLOYMENT HACK <<
-# This code will run ONCE when the server starts to create our tables
-# and add the admin user. After the first successful deploy,
-# we will REMOVE this code.
-# =========================================================================
+# This code runs ONCE when the server starts to create tables and admin user.
+# After the first successful deploy, REMOVE this entire block.
+# ==============================================================================
 with app.app_context():
     print("Executing one-time database setup...")
-    # Create all tables if they don't exist
     db.create_all()
-
-    # Check if admin user already exists
-    admin_exists = Admin.query.filter_by(email='rjndkl1224@gmail.com').first()
-    if not admin_exists:
+    if not Admin.query.filter_by(email='rjndkl1224@gmail.com').first():
         print("Admin user not found, creating one...")
-        # Create the admin user
         pw_hash = bcrypt.generate_password_hash('RazanIsAdmin').decode('utf-8')
         key_hash = bcrypt.generate_password_hash('RD_Cafe_2024').decode('utf-8')
         new_admin = Admin(email='rjndkl1224@gmail.com', password_hash=pw_hash, secret_key_hash=key_hash)
@@ -228,6 +373,3 @@ with app.app_context():
     else:
         print("Admin user already exists.")
     print("One-time setup finished.")
-
-
-    
