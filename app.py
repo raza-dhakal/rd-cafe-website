@@ -331,3 +331,5 @@ def create_app():
 # This is needed for Gunicorn
 # ==========================================================
 app = create_app()
+with app.app_context():
+    # ... (the database setup code is here) ...
