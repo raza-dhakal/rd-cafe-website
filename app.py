@@ -104,11 +104,17 @@ def create_app():
     csrf.init_app(app)
 
     # --- Register Blueprints ---
-    google_blueprint.client_id = os.getenv("GOOGLE_OAUTH_CLIENT_ID")
-    google_blueprint.client_secret = os.getenv("GOOGLE_OAUTH_CLIENT_SECRET")
-    google_blueprint.scope = ["profile", "email"]
-    app.register_blueprint(google_blueprint, url_prefix="/login")
-
+ 
+google_blueprint.client_id = os.getenv("GOOGLE_OAUTH_CLIENT_ID")
+google_blueprint.client_secret = os.getenv("GOOGLE_OAUTH_CLIENT_SECRET")
+# >> THE FIX IS HERE <<
+# We are using the full, correct URLs for the scope.
+google_blueprint.scope = [
+    "openid",
+    "https://www.googleapis.com/auth/userinfo.email",
+    "https://www.googleapis.com/auth/userinfo.profile",
+]
+app.register_blueprint(google_blueprint, url_prefix="/login")
     # --- Helper Functions ---
     def generate_otp(length=6): return ''.join(random.choices(string.digits, k=length))
     def allowed_file(filename): return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
