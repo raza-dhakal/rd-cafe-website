@@ -1,6 +1,5 @@
 # ==========================================================
-# FINAL AND COMPLETE APP.PY FOR RENDER DEPLOYMENT
-# This version is fully reviewed and corrected.
+# FINAL, CORRECTED APP.PY FOR RENDER DEPLOYMENT
 # ==========================================================
 
 import os
@@ -27,52 +26,13 @@ mail = Mail()
 csrf = CSRFProtect()
 google_blueprint = make_google_blueprint()
 
-# ==========================================================
-# DATABASE MODELS
-# ==========================================================
-class User(db.Model):
-    __tablename__ = 'users'
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(100), unique=True, nullable=False)
-    password_hash = db.Column(db.String(255), nullable=False)
-    created_at = db.Column(db.TIMESTAMP, server_default=db.func.current_timestamp())
-
-class Menu(db.Model):
-    __tablename__ = 'menu'
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    description = db.Column(db.Text)
-    price = db.Column(db.Numeric(10, 2), nullable=False)
-    image_url = db.Column(db.String(255))
-    category = db.Column(db.String(50), default='Coffee')
-
-class Order(db.Model):
-    __tablename__ = 'orders'
-    order_id = db.Column(db.Integer, primary_key=True)
-    customer_name = db.Column(db.String(255), nullable=False)
-    menu_item_id = db.Column(db.Integer, db.ForeignKey('menu.id'), nullable=False)
-    quantity = db.Column(db.Integer, nullable=False)
-    payment_method = db.Column(db.String(50), nullable=False)
-    order_status = db.Column(db.String(50), default='Pending')
-    order_date = db.Column(db.TIMESTAMP, server_default=db.func.current_timestamp())
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
-    menu_item = db.relationship('Menu', backref='orders')
-
-class Admin(db.Model):
-    __tablename__ = 'admin'
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(100), unique=True, nullable=False)
-    password_hash = db.Column(db.String(255), nullable=False)
-    secret_key_hash = db.Column(db.String(255), nullable=False)
-
-class OtpLog(db.Model):
-    __tablename__ = 'otp_logs'
-    id = db.Column(db.Integer, primary_key=True)
-    admin_email = db.Column(db.String(100), nullable=False)
-    otp_code = db.Column(db.String(10), nullable=False)
-    created_at = db.Column(db.TIMESTAMP, server_default=db.func.current_timestamp())
-    is_used = db.Column(db.Boolean, default=False)
+# --- Database Models ---
+# (Your User, Menu, Order, Admin, OtpLog model classes go here. No changes needed.)
+class User(db.Model): __tablename__ = 'users'; id = db.Column(db.Integer, primary_key=True); username = db.Column(db.String(100), nullable=False); email = db.Column(db.String(100), unique=True, nullable=False); password_hash = db.Column(db.String(255), nullable=False); created_at = db.Column(db.TIMESTAMP, server_default=db.func.current_timestamp())
+class Menu(db.Model): __tablename__ = 'menu'; id = db.Column(db.Integer, primary_key=True); name = db.Column(db.String(100), nullable=False); description = db.Column(db.Text); price = db.Column(db.Numeric(10, 2), nullable=False); image_url = db.Column(db.String(255)); category = db.Column(db.String(50), default='Coffee')
+class Order(db.Model): __tablename__ = 'orders'; order_id = db.Column(db.Integer, primary_key=True); customer_name = db.Column(db.String(255), nullable=False); menu_item_id = db.Column(db.Integer, db.ForeignKey('menu.id'), nullable=False); quantity = db.Column(db.Integer, nullable=False); payment_method = db.Column(db.String(50), nullable=False); order_status = db.Column(db.String(50), default='Pending'); order_date = db.Column(db.TIMESTAMP, server_default=db.func.current_timestamp()); user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True); menu_item = db.relationship('Menu', backref='orders')
+class Admin(db.Model): __tablename__ = 'admin'; id = db.Column(db.Integer, primary_key=True); email = db.Column(db.String(100), unique=True, nullable=False); password_hash = db.Column(db.String(255), nullable=False); secret_key_hash = db.Column(db.String(255), nullable=False)
+class OtpLog(db.Model): __tablename__ = 'otp_logs'; id = db.Column(db.Integer, primary_key=True); admin_email = db.Column(db.String(100), nullable=False); otp_code = db.Column(db.String(10), nullable=False); created_at = db.Column(db.TIMESTAMP, server_default=db.func.current_timestamp()); is_used = db.Column(db.Boolean, default=False)
 
 # ==========================================================
 # APP FACTORY
@@ -103,25 +63,21 @@ def create_app():
     mail.init_app(app)
     csrf.init_app(app)
 
-    # --- Register Blueprints ---
- 
-google_blueprint.client_id = os.getenv("GOOGLE_OAUTH_CLIENT_ID")
-google_blueprint.client_secret = os.getenv("GOOGLE_OAUTH_CLIENT_SECRET")
-# >> THE FIX IS HERE <<
-# We are using the full, correct URLs for the scope.
-google_blueprint.scope = [
-    "openid",
-    "https://www.googleapis.com/auth/userinfo.email",
-    "https://www.googleapis.com/auth/userinfo.profile",
-]
-app.register_blueprint(google_blueprint, url_prefix="/login")
+    # --- Register Blueprints (Corrected Placement) ---
+    google_blueprint.client_id = os.getenv("GOOGLE_OAUTH_CLIENT_ID")
+    google_blueprint.client_secret = os.getenv("GOOGLE_OAUTH_CLIENT_SECRET")
+    google_blueprint.scope = [
+        "openid",
+        "https://www.googleapis.com/auth/userinfo.email",
+        "https://www.googleapis.com/auth/userinfo.profile",
+    ]
+    app.register_blueprint(google_blueprint, url_prefix="/login")
+
     # --- Helper Functions ---
     def generate_otp(length=6): return ''.join(random.choices(string.digits, k=length))
-    def allowed_file(filename): return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-    # ==========================================================
-    # ALL ROUTES ARE DEFINED INSIDE THE APP CONTEXT
-    # ==========================================================
+    def allowed_file(filename): return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+    
+    # --- ALL ROUTES ARE DEFINED INSIDE THE APP CONTEXT ---
     with app.app_context():
         # --- Public & User Routes ---
         @app.route('/')
@@ -161,6 +117,27 @@ app.register_blueprint(google_blueprint, url_prefix="/login")
                 else:
                     flash('Login Unsuccessful. Check email and password.', 'danger')
             return render_template('login.html')
+
+        @app.route("/login/google/authorized")
+        def google_authorized():
+            if not google.authorized:
+                flash("Failed to log in with Google.", "danger")
+                return redirect(url_for("login"))
+            resp = google.get("/oauth2/v2/userinfo")
+            if not resp.ok:
+                flash("Could not fetch user info from Google.", "danger")
+                return redirect(url_for("login"))
+            info = resp.json()
+            user = User.query.filter_by(email=info['email']).first()
+            if not user:
+                unusable_pass = bcrypt.generate_password_hash(os.urandom(16)).decode('utf-8')
+                user = User(email=info['email'], username=info['name'], password_hash=unusable_pass)
+                db.session.add(user)
+                db.session.commit()
+                flash(f"Welcome, {info['name']}! Your account has been created.", "success")
+            session['logged_in'], session['user_id'], session['username'] = True, user.id, user.username
+            flash("Successfully logged in with Google!", "success")
+            return redirect(url_for('dashboard'))
 
         @app.route('/dashboard')
         def dashboard():
@@ -231,7 +208,7 @@ app.register_blueprint(google_blueprint, url_prefix="/login")
                     flash('Invalid or expired PIN.', 'danger')
                     return redirect(url_for('admin_login'))
             return render_template('admin_verify_otp.html')
-        
+
         @app.route('/admin/dashboard')
         def admin_dashboard():
             if 'admin_logged_in' not in session: return redirect(url_for('admin_login'))
