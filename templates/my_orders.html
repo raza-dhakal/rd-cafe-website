@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}My Order History - RD Cafe{% endblock %}
+{% block content %}
+<section class="container content-section">
+    <div class="admin-header">
+        <h1 class="section-title" style="margin-top: 40px;">My Order History</h1>
+    </div>
+
+    <div class="admin-table-container">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Item Ordered</th>
+                    <th>Qty</th>
+                    <th>Payment</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if orders %}
+                    {% for order in orders %}
+                    <tr>
+                        <td data-label="Order ID">#{{ order.order_id }}</td>
+                        <td data-label="Item">{{ order.menu_item_name }}</td>
+                        <td data-label="Qty">{{ order.quantity }}</td>
+                        <td data-label="Payment">{{ order.payment_method }}</td>
+                        <td data-label="Status">
+                            <span class="status-badge status-{{ order.order_status | lower }}">{{ order.order_status }}</span>
+                        </td>
+                        <td data-label="Date">{{ order.order_date.strftime('%Y-%m-%d %H:%M') }}</td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="6" style="text-align: center;">You haven't placed any orders yet.</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

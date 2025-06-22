@@ -1,4 +1,8 @@
-/* static/css/admin.css */
+/*
+====================================
+RD CAFE - Admin Panel Stylesheet
+====================================
+*/
 
 .admin-header {
   display: flex;
@@ -61,30 +65,43 @@
   border: none;
   cursor: pointer;
   text-align: center;
+  color: white !important; /* Override link colors */
 }
 
-.btn-edit {
-  background-color: #17a2b8;
-  color: white;
-}
-.btn-edit:hover {
-  background-color: #138496;
-}
+.btn-edit { background-color: #007bff; /* Blue */ }
+.btn-edit:hover { background-color: #0069d9; }
 
-.btn-delete {
-  background-color: #dc3545;
-  color: white;
-}
-.btn-delete:hover {
-  background-color: #c82333;
-}
+.btn-delete { background-color: #dc3545; /* Red */ }
+.btn-delete:hover { background-color: #c82333; }
 
-.nav-link.active {
+.btn-complete { background-color: #28a745; /* Green */ }
+.btn-complete:hover { background-color: #218838; }
+
+.btn-cancel { background-color: #6c757d; /* Gray */ }
+.btn-cancel:hover { background-color: #5a6268; }
+
+/* Admin nav active link */
+.navbar .nav-link.active {
   color: #e4d5b7;
   font-weight: 700;
+  border-bottom: 2px solid #e4d5b7;
 }
 
-/* Responsive Table */
+/* Status Badges */
+.status-badge {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #fff;
+}
+.status-pending { background-color: #ffc107; color: #333; }
+.status-completed { background-color: #28a745; }
+.status-cancelled { background-color: #dc3545; }
+
+
+/* Responsive Admin Table */
 @media screen and (max-width: 768px) {
   .admin-table thead {
       display: none;
@@ -114,45 +131,4 @@
       text-align: left;
       font-weight: 600;
   }
-}
-/* In static/css/admin.css, add this at the end */
-
-.status-badge {
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  color: #fff;
-}
-
-.status-pending {
-  background-color: #ffc107; /* Yellow */
-  color: #333;
-}
-
-.status-completed {
-  background-color: #28a745; /* Green */
-}
-
-.status-cancelled {
-  background-color: #dc3545; /* Red */
-}
-
-/* In static/css/admin.css, add this at the end */
-
-.btn-complete {
-  background-color: #28a745; /* Green */
-  color: white;
-}
-.btn-complete:hover {
-  background-color: #218838;
-}
-
-.btn-cancel {
-  background-color: #dc3545; /* Red */
-  color: white;
-}
-.btn-cancel:hover {
-  background-color: #c82333;
 }

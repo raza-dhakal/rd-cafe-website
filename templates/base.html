@@ -19,10 +19,11 @@
                 <li class="nav-item"><a href="{{ url_for('home') }}" class="nav-link">Home</a></li>
                 <li class="nav-item"><a href="{{ url_for('menu') }}" class="nav-link">Menu</a></li>
                 <li class="nav-item"><a href="{{ url_for('order') }}" class="nav-link">Order Now</a></li>
-                <li class="nav-item"><a href="{{ url_for('owner_info') }}" class="nav-link">About</a></li> <!-- Changed "About Us" to "About" -->
+                <li class="nav-item"><a href="{{ url_for('owner_info') }}" class="nav-link">About</a></li>
                 
                 <!-- === Dynamic Links for User Login/Logout === -->
                 {% if session.logged_in %}
+                    <li class="nav-item"><a href="{{ url_for('my_orders') }}" class="nav-link">My Orders</a></li> <!-- <<< NEW LINK ADDED HERE -->
                     <li class="nav-item"><a href="{{ url_for('dashboard') }}" class="nav-link">Dashboard</a></li>
                     <li class="nav-item"><a href="{{ url_for('logout') }}" class="nav-link">Logout</a></li>
                 {% else %}
