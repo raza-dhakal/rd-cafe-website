@@ -7,7 +7,7 @@ Flask-WTF
 Flask-Dance
 Werkzeug
 psycopg2-binary
-Flask-SQLAlchemy  # <<< THIS WAS THE MISSING PIECE
+Flask-SQLAlchemy
 SQLAlchemy
 blinker
 click
