@@ -11,10 +11,17 @@ from flask_wtf.csrf import CSRFProtect
 from flask_dance.contrib.google import make_google_blueprint, google
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
+from flask_sqlalchemy import SQLAlchemy  #render ko lagi database 
 
 # --- Load Environment Variables ---
 load_dotenv()
 
+# --- Initialize Extensions (globally) ---
+db = SQLAlchemy() # <--- CORRECT
+bcrypt = Bcrypt()
+mail = Mail()
+csrf = CSRFProtect()
+google_blueprint = make_google_blueprint()
 # --- Initial Setup and Configuration ---
 app = Flask(__name__)
 # Explicitly set the server name to prevent URL generation issues.
