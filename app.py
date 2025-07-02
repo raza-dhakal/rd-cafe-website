@@ -3,7 +3,6 @@ import random
 import string
 import uuid
 from datetime import datetime, timedelta
-from dotenv import load_dotenv
 from flask import Flask, render_template, url_for, request, redirect, session, flash
 from flask_mysqldb import MySQL
 from flask_bcrypt import Bcrypt
@@ -11,12 +10,15 @@ from flask_mail import Mail, Message
 from flask_wtf.csrf import CSRFProtect
 from flask_dance.contrib.google import make_google_blueprint, google
 from werkzeug.utils import secure_filename
+from dotenv import load_dotenv
 
 # --- Load Environment Variables ---
 load_dotenv()
 
 # --- Initial Setup and Configuration ---
 app = Flask(__name__)
+# Explicitly set the server name to prevent URL generation issues.
+app.config['SERVER_NAME'] = "127.0.0.1:5001"
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 csrf = CSRFProtect(app)
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'

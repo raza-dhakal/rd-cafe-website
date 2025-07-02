@@ -2,8 +2,11 @@
 {% block title %}Login - RD Cafe{% endblock %}
 {% block content %}
 <div class="form-container">
-    <form  {{ csrf_token() }}
+    {% include '_flash_messages.html' %}
+    <form 
+        {{ csrf_token() }}
         method="POST" action="{{ url_for('login') }}" class="auth-form">
+          <!-- <<< THIS IS THE FIX. It must be inside the form. -->
         <h2>Log In to Your Account</h2>
         <a href="{{ url_for('google.login') }}" class="btn-google">
             <img src="{{ url_for('static', filename='images/google-icon.svg') }}" alt="Google icon">

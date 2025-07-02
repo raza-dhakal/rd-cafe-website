@@ -2,9 +2,10 @@
 {% block title %}Admin Login - RD Cafe{% endblock %}
 {% block content %}
 <div class="form-container">
-    <form {{ csrf_token() }}
+    <form 
+        {{ csrf_token() }}
         method="POST" action="/admin/login" class="auth-form">
-        
+          <!-- <<< THIS LINE FIXES THE ERROR -->
         <h2>Admin Panel Login</h2>
         {% include '_flash_messages.html' %}
         <div class="form-group">
