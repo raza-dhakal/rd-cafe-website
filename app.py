@@ -390,5 +390,4 @@ with app.app_context():
         print("Sample menu items added.")
     else:
         print("Menu already has items.")
-
     print("One-time setup finished.")
