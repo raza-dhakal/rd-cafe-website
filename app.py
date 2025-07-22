@@ -1,8 +1,7 @@
-# ==============================================================================
-# FINAL, COMPLETE, AND CORRECTED APP.PY FOR RENDER DEPLOYMENT
-# This version uses SQLAlchemy and the App Factory pattern.
-# Every feature from your original project is included and translated.
-# ==============================================================================
+# ==========================================================
+# FINAL, COMPLETE, AND CORRECTED APP.PY FOR RD CAFE
+# This version includes ALL features and is ready for deployment.
+# ==========================================================
 
 import os
 import random
@@ -75,7 +74,6 @@ class OtpLog(db.Model):
     created_at = db.Column(db.TIMESTAMP, server_default=db.func.current_timestamp())
     is_used = db.Column(db.Boolean, default=False)
 
-
 # ==============================================================================
 # --- 4. APP FACTORY (The main function to create and configure the app) ---
 # ==============================================================================
@@ -86,11 +84,24 @@ def create_app():
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
     os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
     app.config['UPLOAD_FOLDER'] = 'static/images'
+
+    # --- Smart Database Config (Works for BOTH Render and Local) ---
     database_url = os.getenv("DATABASE_URL")
-    if database_url and database_url.startswith("postgres://"):
-        database_url = database_url.replace("postgres://", "postgresql://", 1)
-    app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+    if database_url and database_url.startswith("postgres"):
+        # This block runs on Render
+        if database_url.startswith("postgres://"):
+            database_url = database_url.replace("postgres://", "postgresql://", 1)
+        app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+    else:
+        # This block runs on your LOCAL computer
+        mysql_user = os.getenv('MYSQL_USER')
+        mysql_pass = os.getenv('MYSQL_PASSWORD')
+        mysql_host = os.getenv('MYSQL_HOST')
+        mysql_db = os.getenv('MYSQL_DB')
+        app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql+pymysql://{mysql_user}:{mysql_pass}@{mysql_host}/{mysql_db}"
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+    # Mail Config
     app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER')
     app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT', 465))
     app.config['MAIL_USE_TLS'] = os.getenv('MAIL_USE_TLS', 'false').lower() in ['true', '1']
@@ -115,7 +126,9 @@ def create_app():
     def generate_otp(length=6): return ''.join(random.choices(string.digits, k=length))
     def allowed_file(filename): return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'png', 'jpg', 'jpeg', 'gif', 'webp'}
     
-    # --- ALL ROUTES GO INSIDE THIS FUNCTION ---
+    # ==========================================================
+    # ALL ROUTES ARE DEFINED HERE
+    # ==========================================================
     @app.route('/')
     def home(): return render_template('home.html')
 
@@ -153,7 +166,7 @@ def create_app():
             else:
                 flash('Login Unsuccessful. Check email and password.', 'danger')
         return render_template('login.html')
-
+    
     @app.route("/login/google/authorized")
     def google_authorized():
         if not google.authorized:
@@ -203,6 +216,7 @@ def create_app():
             return redirect(url_for('menu'))
         return render_template('order.html', menu_items=menu_items)
 
+    # --- Admin Routes ---
     @app.route('/admin/login', methods=['GET', 'POST'])
     def admin_login():
         if request.method == 'POST':
@@ -243,7 +257,7 @@ def create_app():
                 flash('Invalid or expired PIN.', 'danger')
                 return redirect(url_for('admin_login'))
         return render_template('admin_verify_otp.html')
-
+        
     @app.route('/admin/dashboard')
     def admin_dashboard():
         if 'admin_logged_in' not in session: return redirect(url_for('admin_login'))
@@ -356,17 +370,17 @@ def create_app():
     return app
 
 # ==========================================================
-# This is needed for Gunicorn to find the app
+# This is needed for Gunicorn
 # ==========================================================
 app = create_app()
 
 # =========================================================================
 # >> TEMPORARY DEPLOYMENT HACK <<
-# This code runs ONCE when the server starts. REMOVE IT after first success.
 # =========================================================================
 with app.app_context():
-    print("Executing one-time database setup...")
+    print("--- Executing one-time database setup ---")
     db.create_all()
+    
     if not Admin.query.filter_by(email='rjndkl1224@gmail.com').first():
         print("Admin user not found, creating one...")
         pw_hash = bcrypt.generate_password_hash('RazanIsAdmin').decode('utf-8')
@@ -374,9 +388,9 @@ with app.app_context():
         new_admin = Admin(email='rjndkl1224@gmail.com', password_hash=pw_hash, secret_key_hash=key_hash)
         db.session.add(new_admin)
         db.session.commit()
-        print("Admin user created successfully!")
+        print("--> Admin user created successfully!")
     else:
-        print("Admin user already exists.")
+        print("--> Admin user already exists.")
     
     if Menu.query.count() == 0:
         print("Menu is empty, adding sample items...")
@@ -387,7 +401,8 @@ with app.app_context():
         ]
         db.session.bulk_save_objects(sample_menu)
         db.session.commit()
-        print("Sample menu items added.")
+        print("--> Sample menu items added.")
     else:
-        print("Menu already has items.")
-    print("One-time setup finished.")
+        print("--> Menu already has items.")
+        
+    print("--- One-time setup finished ---")

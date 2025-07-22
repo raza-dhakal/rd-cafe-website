@@ -6,16 +6,10 @@ Flask-Mail
 Flask-WTF
 Flask-Dance
 Werkzeug
+# For Render (PostgreSQL)
 psycopg2-binary
+# For Local Machine (MySQL)
+pymysql
+# For both databases
 Flask-SQLAlchemy
 SQLAlchemy
-blinker
-click
-itsdangerous
-Jinja2
-MarkupSafe
-oauthlib
-requests
-requests-oauthlib
-urlobject
-WTForms

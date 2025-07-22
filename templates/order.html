@@ -3,9 +3,8 @@
 {% block content %}
 <section class="container content-section">
     <div class="form-container" style="max-width: 600px;">
-        <form  {{ csrf_token() }}
-            method="POST" action="{{ url_for('order') }}" class="auth-form">
-           
+        <form method="POST" action="{{ url_for('order') }}" class="auth-form">
+            {{ csrf_token() }}
             <h2 class="section-title" style="margin-bottom: 30px; font-size: 2.5rem;">Place Your Order</h2>
             {% include '_flash_messages.html' %}
             <div class="form-group">

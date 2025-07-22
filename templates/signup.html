@@ -2,8 +2,8 @@
 {% block title %}Sign Up - RD Cafe{% endblock %}
 {% block content %}
 <div class="form-container">
-    <form  {{ csrf_token() }}
-        method="POST" action="{{ url_for('signup') }}" class="auth-form">
+    <form method="POST" action="{{ url_for('signup') }}" class="auth-form">
+        {{ csrf_token() }}
         <h2>Create Your Account</h2>
         <a href="{{ url_for('google.login') }}" class="btn-google">
             <img src="{{ url_for('static', filename='images/google-icon.svg') }}" alt="Google icon">

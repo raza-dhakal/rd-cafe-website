@@ -2,9 +2,9 @@
 {% block title %}Verify PIN - Admin Panel{% endblock %}
 {% block content %}
 <div class="form-container">
-    <form {{ csrf_token() }}
-        method="POST" action="/admin/verify-otp" class="auth-form">
-        <h2>Enter Your 6-Digit PIN</h2>
+    <form method="POST" action="/admin/verify-otp" class="auth-form">
+        {{ csrf_token() }}
+         <h2>Enter Your 6-Digit PIN</h2>
         <p style="text-align: center; margin-bottom: 20px;">A PIN was sent to your email. It will expire in 5 minutes.</p>
         {% include '_flash_messages.html' %}
         <div class="form-group">
