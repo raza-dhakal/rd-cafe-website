@@ -7,9 +7,9 @@
         <!-- Flash messages go here, outside the form -->
         {% include '_flash_messages.html' %}
         
-        <form method="POST" action="{{ url_for('order') }}" class="auth-form">
+        <form {{ csrf_token() }} method="POST" action="{{ url_for('order') }}" class="auth-form">
             <!-- CSRF token goes HERE, inside the form -->
-            {{ csrf_token() }}
+                        
             
             <h2 class="section-title" style="margin-bottom: 30px; font-size: 2.5rem;">Place Your Order</h2>
             
