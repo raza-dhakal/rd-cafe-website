@@ -3,9 +3,8 @@
 {% block content %}
 <div class="form-container">
     {% include '_flash_messages.html' %}
-    <form 
-        {{ csrf_token() }}
-        method="POST" action="{{ url_for('login') }}" class="auth-form">
+        <input type="hidden" name="csrf_token" value="[I csrf_token( ))"/>
+        <form method="POST" action="{{ url_for('login') }}" class="auth-form">
           <!-- <<< THIS IS THE FIX. It must be inside the form. -->
         <h2>Log In to Your Account</h2>
         <a href="{{ url_for('google.login') }}" class="btn-google">
