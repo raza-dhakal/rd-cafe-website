@@ -27,6 +27,7 @@ bcrypt = Bcrypt()
 mail = Mail()
 csrf = CSRFProtect()
 google_blueprint = make_google_blueprint()
+DB_URL = os.environ.get("DATABASE_URL")  # Render मा सेट गर्नुपर्ने
 
 # ==============================================================================
 # --- 3. DATABASE MODELS (Your table structures in Python) ---
@@ -391,3 +392,6 @@ with app.app_context():
     else:
         print("Menu already has items.")
     print("One-time setup finished.")
+# ローカル開発用の実行 (Local development execution)
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0', port=5000)

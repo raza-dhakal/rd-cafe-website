@@ -1,6 +1,6 @@
 Flask
 gunicorn
-python-dotenv
+python-dotenv   #local testing
 Flask-Bcrypt
 Flask-Mail
 Flask-WTF
@@ -19,3 +19,4 @@ requests
 requests-oauthlib
 urlobject
 WTForms
+mysql-connector-python 
