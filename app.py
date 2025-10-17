@@ -27,7 +27,7 @@ bcrypt = Bcrypt()
 mail = Mail()
 csrf = CSRFProtect()
 google_blueprint = make_google_blueprint()
-DB_URL = os.environ.get("DATABASE_URL")  # Render मा सेट गर्नुपर्ने
+DB_URL = os.environ.get("DATABASE_URL")  # Set this in Render
 
 # ==============================================================================
 # --- 3. DATABASE MODELS (Your table structures in Python) ---
@@ -89,6 +89,7 @@ def create_app():
     app.config['UPLOAD_FOLDER'] = 'static/images'
     database_url = os.getenv("DATABASE_URL")
     if database_url and database_url.startswith("postgres://"):
+        # Fix for SQLAlchemy/Render compatibility
         database_url = database_url.replace("postgres://", "postgresql://", 1)
     app.config['SQLALCHEMY_DATABASE_URI'] = database_url
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -191,18 +192,42 @@ def create_app():
     def order():
         menu_items = Menu.query.with_entities(Menu.id, Menu.name, Menu.price).order_by(Menu.name).all()
         if request.method == 'POST':
+            # Ensure user_id is set only if the user is logged in
+            user_id = session.get('user_id')
+            # If logged in, fill customer_name from session for consistency
+            customer_name = session.get('username') if user_id else request.form['customer_name']
+
             new_order = Order(
-                customer_name=request.form['customer_name'],
+                customer_name=customer_name,
                 menu_item_id=request.form['menu_item_id'],
                 quantity=request.form['quantity'],
                 payment_method=request.form['payment_method'],
-                user_id=session.get('user_id')
+                user_id=user_id
             )
             db.session.add(new_order)
             db.session.commit()
             flash('Your order has been placed successfully!', 'success')
             return redirect(url_for('menu'))
         return render_template('order.html', menu_items=menu_items)
+
+    @app.route('/my-orders')
+    def my_orders():
+        if 'logged_in' not in session:
+            flash('Please log in to view your order history.', 'info')
+            return redirect(url_for('login'))
+        
+        # Joins Order table with Menu table to get the item name
+        orders = db.session.query(
+            Order.order_id,
+            Menu.name.label('menu_item_name'),
+            Order.quantity,
+            Order.payment_method,
+            Order.order_status,
+            Order.order_date
+        ).join(Menu).filter(Order.user_id == session['user_id']).order_by(Order.order_date.desc()).all()
+        
+        return render_template('my_orders.html', orders=orders)
+
 
     @app.route('/admin/login', methods=['GET', 'POST'])
     def admin_login():
@@ -232,6 +257,7 @@ def create_app():
         if request.method == 'POST':
             user_otp, admin_email = request.form['otp'], session['admin_email_for_otp_verification']
             five_minutes_ago = datetime.utcnow() - timedelta(minutes=5)
+            # otp_code should be compared as string
             valid_otp = OtpLog.query.filter(OtpLog.admin_email == admin_email, OtpLog.otp_code == user_otp, OtpLog.is_used == False, OtpLog.created_at > five_minutes_ago).first()
             if valid_otp:
                 valid_otp.is_used = True
@@ -242,7 +268,7 @@ def create_app():
                 return redirect(url_for('admin_dashboard'))
             else:
                 flash('Invalid or expired PIN.', 'danger')
-                return redirect(url_for('admin_login'))
+                return redirect(url_for('admin_login')) 
         return render_template('admin_verify_otp.html')
 
     @app.route('/admin/dashboard')
@@ -363,7 +389,9 @@ app = create_app()
 
 # =========================================================================
 # >> TEMPORARY DEPLOYMENT HACK <<
-# This code runs ONCE when the server starts. REMOVE IT after first success.
+# This code runs ONCE when the server starts.
+# NOTE: REMOVE THIS BLOCK AFTER YOUR FIRST SUCCESSFUL DEPLOYMENT ON RENDER
+# TO PREVENT DATA RE-POPULATION ON EVERY RESTART.
 # =========================================================================
 with app.app_context():
     print("Executing one-time database setup...")
@@ -392,6 +420,13 @@ with app.app_context():
     else:
         print("Menu already has items.")
     print("One-time setup finished.")
-# ローカル開発用の実行 (Local development execution)
+
+# =========================================================================
+# >> LOCAL DEVELOPMENT EXECUTION <<
+# =========================================================================
 if __name__ == '__main__':
+    # 'static/images' folder banana
+    if not os.path.exists(app.config['UPLOAD_FOLDER']):
+        os.makedirs(app.config['UPLOAD_FOLDER'])
+            
     app.run(debug=True, host='0.0.0.0', port=5000)

@@ -141,3 +141,81 @@ CREATE TABLE orders (
         REFERENCES users(id)
         ON DELETE SET NULL -- If a user is deleted, keep the order but set user_id to NULL
 );
+
+
+USE rd_cafe_db;
+
+-- ----------------------------
+-- 1. User Table (ग्राहकहरूको लागि)
+-- ----------------------------
+CREATE TABLE user (
+    id INT NOT NULL AUTO_INCREMENT,
+    username VARCHAR(80) NOT NULL,
+    email VARCHAR(120) NOT NULL UNIQUE,
+    password_hash VARCHAR(255), -- साँचो पासवर्ड होइन, ह्यास मात्र स्टोर गर्नुहोस्
+    is_google_user BOOLEAN DEFAULT FALSE, -- Google बाट लगइन भएको हो/होइन
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id)
+);
+
+-- ----------------------------
+-- 2. Admin Table (एडमिनको लागि)
+-- ----------------------------
+CREATE TABLE admin (
+    id INT NOT NULL AUTO_INCREMENT,
+    email VARCHAR(120) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    secret_key VARCHAR(255) NOT NULL, -- Admin Panel मा जानको लागि अतिरिक्त सुरक्षा
+    username VARCHAR(80) NOT NULL,
+    PRIMARY KEY (id)
+);
+
+-- प्रारम्भिक एडमिन खाता सिर्जना गर्नुहोस् (तपाईंले यसको पासवर्ड र secret_key लाई 'app.py' मा ह्यास गर्नुपर्नेछ)
+-- NOTE: 'app.py' मा hash गरेर मात्रै प्रयोग गर्नुपर्छ। यहाँ उदाहरणको लागि मात्र राखिएको छ।
+INSERT INTO admin (email, password_hash, secret_key, username) VALUES 
+('admin@rdcafe.com', 'initial_admin_password_hash', 'initial_secret_key_hash', 'RD_Admin');
+
+
+-- ----------------------------
+-- 3. Menu Item Table (मेनु व्यवस्थापनको लागि)
+-- ----------------------------
+CREATE TABLE menu_item (
+    id INT NOT NULL AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    price DECIMAL(10, 2) NOT NULL,
+    category VARCHAR(50) NOT NULL,
+    image_url VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id)
+);
+
+-- ----------------------------
+-- 4. Order Details Table (ग्राहकहरूको अर्डरहरूको लागि)
+-- ----------------------------
+CREATE TABLE order_details (
+    order_id INT NOT NULL AUTO_INCREMENT,
+    user_id INT, -- यदि लगइन भएको ग्राहक हो भने, नत्र NULL
+    customer_name VARCHAR(100) NOT NULL,
+    menu_item_id INT NOT NULL,
+    quantity INT NOT NULL,
+    payment_method VARCHAR(50) NOT NULL,
+    order_status ENUM('Pending', 'Processing', 'Completed', 'Cancelled') DEFAULT 'Pending',
+    order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (order_id),
+    FOREIGN KEY (user_id) REFERENCES user(id),
+    FOREIGN KEY (menu_item_id) REFERENCES menu_item(id)
+);
+
+-- ----------------------------
+-- 5. OTP Log Table (Admin Login सुरक्षाको लागि)
+-- ----------------------------
+CREATE TABLE otp_log (
+    id INT NOT NULL AUTO_INCREMENT,
+    admin_email VARCHAR(120) NOT NULL,
+    otp_code VARCHAR(6) NOT NULL,
+    is_used BOOLEAN DEFAULT FALSE,
+    expires_at DATETIME NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id)
+);

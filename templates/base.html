@@ -4,10 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}RD Cafe{% endblock %}</title>
+    <!-- Assuming your style.css is already in static/css/ -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Playfair+Display:wght=700&display=swap" rel="stylesheet">
 </head>
 <body>
     <header>
@@ -20,14 +21,23 @@
                 <li class="nav-item"><a href="{{ url_for('menu') }}" class="nav-link">Menu</a></li>
                 <li class="nav-item"><a href="{{ url_for('order') }}" class="nav-link">Order Now</a></li>
                 <li class="nav-item"><a href="{{ url_for('owner_info') }}" class="nav-link">About</a></li>
+                <li class="nav-item"><a href="{{ url_for('contact') }}" class="nav-link">Contact</a></li>
                 
-                <!-- === Dynamic Links for User Login/Logout === -->
-                {% if session.logged_in %}
-                    <li class="nav-item"><a href="{{ url_for('my_orders') }}" class="nav-link">My Orders</a></li> <!-- <<< NEW LINK ADDED HERE -->
-                    <li class="nav-item"><a href="{{ url_for('dashboard') }}" class="nav-link">Dashboard</a></li>
-                    <li class="nav-item"><a href="{{ url_for('logout') }}" class="nav-link">Logout</a></li>
+                <!-- === Dynamic Links for User/Admin Login/Logout === -->
+                {% if session.logged_in or session.get('is_admin') %}
+                    <!-- If an Admin is logged in -->
+                    {% if session.get('is_admin') %}
+                        <li class="nav-item"><a href="{{ url_for('admin_dashboard') }}" class="nav-link active btn-nav" style="background-color: #a00; color: white; padding: 5px 10px;">Admin Panel</a></li>
+                        <li class="nav-item"><a href="{{ url_for('admin_logout') }}" class="nav-link">Admin Logout</a></li>
+                    <!-- If a regular Customer is logged in -->
+                    {% else %}
+                        <li class="nav-item"><a href="{{ url_for('my_orders') }}" class="nav-link">My Orders</a></li> 
+                        <li class="nav-item"><a href="{{ url_for('dashboard') }}" class="nav-link">Dashboard</a></li>
+                        <li class="nav-item"><a href="{{ url_for('logout') }}" class="nav-link">Logout</a></li>
+                    {% endif %}
                 {% else %}
-                    <li class="nav-item"><a href="{{ url_for('login') }}" class="nav-link">Login</a></li>
+                    <!-- Not logged in -->
+                    <li class="nav-item"><a href="{{ url_for('login') }}" class="nav-link">Customer Login</a></li>
                     <li class="nav-item"><a href="{{ url_for('signup') }}" class="nav-link btn-nav">Sign Up</a></li>
                 {% endif %}
             </ul>
@@ -43,7 +53,7 @@
     </main>
 
     <footer>
-        <p>© 2024 RD Cafe by Rajan Dhakal. All rights reserved.</p>
+        <p>© 2024 RD Cafe by Rajan Dhakal. All Rights Reserved.</p>
     </footer>
 </body>
 </html>

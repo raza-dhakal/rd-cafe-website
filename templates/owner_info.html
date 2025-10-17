@@ -5,13 +5,10 @@
     <h1 class="section-title">About the Owner</h1>
     
     <div class="owner-container">
-        <!-- Profile Picture -->
         <div class="owner-photo">
-            <!-- Replace with your actual photo in static/images/ -->
             <img src="{{ url_for('static', filename='images/rajan_dhakal.jpg') }}" alt="Rajan Dhakal">
         </div>
 
-        <!-- Bio and Language Tabs -->
         <div class="owner-bio">
             <h2 class="owner-name">Rajan Dhakal</h2>
             
@@ -21,29 +18,26 @@
                 <button class="tab-link" onclick="openLang(event, 'Japanese')">日本語</button>
             </div>
 
-            <!-- English Content -->
             <div id="English" class="tab-content" style="display:block;">
                 <h3>Founder & Barista</h3>
                 <p>
                     Welcome to RD Cafe! I'm Rajan Dhakal, the founder and passionate coffee enthusiast behind this project. My journey started with a simple love for the perfect cup of coffee and a dream to create a space where people can connect, relax, and enjoy high-quality beverages.
                 </p>
                 <p>
-                    Having spent time in Japan, I was deeply inspired by their dedication to precision, quality, and minimalist aesthetics ('shibui'). I've brought that same philosophy to RD Cafe, ensuring that every bean is perfectly roasted and every cup is brewed with care. This website is the digital extension of that dream, built with the same attention to detail using Python and Flask. Thank you for visiting, and I hope you enjoy your experience!
+                    During my time in Japan, I was deeply inspired by the commitment to precision, quality, and minimalist aesthetics (Shibui). I've brought that philosophy to RD Cafe, ensuring every single cup is brewed with care. This website is the digital version of that dream, built with the same attention to detail using Python and Flask. Thank you for visiting, and please enjoy!
                 </p>
             </div>
 
-            <!-- Nepali Content -->
             <div id="Nepali" class="tab-content">
                 <h3>संस्थापक र बरिस्ता</h3>
                 <p>
-                    आरडी क्याफेमा स्वागत छ! म राजन ढकाल, यस परियोजना पछाडिको संस्थापक र एक उत्साही कफी प्रेमी हुँ। मेरो यात्रा एक उत्तम कप कफीप्रतिको साधारण प्रेम र एउटा यस्तो ठाउँ सिर्जना गर्ने सपनाबाट सुरु भयो जहाँ मानिसहरूले आराम गर्न, भेटघाट गर्न र उच्च-गुणस्तरको पेय पदार्थको आनन्द लिन सक्छन्।
+                    RD Cafe मा तपाईंलाई स्वागत छ! म राजेन ढकाल, यस परियोजनाको संस्थापक र उत्साही कफी प्रेमी हुँ। मेरो यात्रा उत्तम कफीको लागि साधारण प्रेम र मानिसहरूलाई जोडिने, आराम गर्ने, र उच्च-गुणस्तरका पेय पदार्थहरूको आनन्द लिने ठाउँ सिर्जना गर्ने सपनाबाट सुरु भयो।
                 </p>
                 <p>
-                    जापानमा समय बिताउँदा, म त्यहाँको गुणस्तर, र सौन्दर्य प्रतिको समर्पणबाट गहिरो रूपमा प्रभावित भएँ। मैले त्यही दर्शनलाई आरडी क्याफेमा ल्याएको छु, जहाँ प्रत्येक कप कफीलाई होसियारीपूर्वक बनाइन्छ। यो वेबसाइट त्यही सपनाको डिजिटल विस्तार हो, जसलाई पाइथन र फ्लास्क प्रयोग गरेर उहीँ ध्यान दिएर बनाइएको छ। भ्रमणको लागि धन्यवाद, र आशा छ तपाईंले आफ्नो अनुभवको आनन्द लिनुहुनेछ!
+                    जापानमा बिताएको समयमा, म त्यहाँको परिशुद्धता, गुणस्तर, र न्यूनतम सौन्दर्यता (शिबुई) को लागि गहिरो रूपमा प्रेरित भएँ। मैले त्यो दर्शनलाई RD Cafe मा ल्याएको छु, हरेक एक कप कफी सावधानीपूर्वक बनाइएको सुनिश्चित गर्दै। यो वेबसाइट त्यही सपनाको डिजिटल रूप हो, जुन Python र Flask प्रयोग गरेर त्यही विस्तृत ध्यानका साथ बनाइएको छ। आउनु भएकोमा धन्यवाद, र आशा छ तपाईंले आफ्नो अनुभवको आनन्द लिनुहुनेछ!
                 </p>
             </div>
 
-            <!-- Japanese Content -->
             <div id="Japanese" class="tab-content">
                 <h3>創設者・バリスタ</h3>
                 <p>
@@ -55,7 +49,15 @@
             </div>
         </div>
     </div>
-</section>
+    
+    <div style="text-align: center; margin-top: 50px; padding: 20px; border-top: 1px solid #ddd;">
+        <h2 style="font-size: 1.5rem; margin-bottom: 15px;">Admin Panel Access</h2>
+        <p style="margin-bottom: 20px;">Staff use only. Please use your Admin credentials to log in.</p>
+        <a href="{{ url_for('admin_login') }}" class="btn-secondary" style="background-color: #333; color: white; border: none; padding: 12px 25px; text-decoration: none; display: inline-block;">
+            Go to Admin Login
+        </a>
+    </div>
+    </section>
 
 <script>
 function openLang(evt, langName) {
@@ -78,5 +80,18 @@ function openLang(evt, langName) {
   document.getElementById(langName).style.display = "block";
   evt.currentTarget.className += " active";
 }
+
+// Default open tab
+document.addEventListener('DOMContentLoaded', (event) => {
+    // Check if a tab is specified in the URL hash, otherwise default to English
+    var hash = window.location.hash.substr(1);
+    if (hash && document.getElementById(hash)) {
+        document.getElementById(hash).style.display = "block";
+        document.querySelector(`.tab-link[onclick*='${hash}']`).classList.add('active');
+    } else {
+        document.getElementById("English").style.display = "block";
+        document.querySelector(".tab-link").classList.add('active');
+    }
+});
 </script>
 {% endblock %}

@@ -9,7 +9,8 @@
         {% include '_flash_messages.html' %}
         <div class="form-group">
             <label for="otp">PIN Code</label>
-            <input type="text" id="otp" name="otp" class="form-control" required maxlength="6" pattern="\d{6}" title="Please enter a 6-digit number." autocomplete="off">
+            <!-- FIX: 'pattern' attribute mein escape error se bachne ke liye '\d{6}' ko '[0-9]{6}' se badal diya gaya hai. -->
+            <input type="text" id="otp" name="otp" class="form-control" required maxlength="6" pattern="[0-9]{6}" title="Please enter a 6-digit number." autocomplete="off">
         </div>
         <button type="submit" class="btn-primary auth-btn">Verify & Log In</button>
     </form>

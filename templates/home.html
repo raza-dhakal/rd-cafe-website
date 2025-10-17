@@ -3,12 +3,13 @@
 {% block title %}Welcome to RD Cafe{% endblock %}
 
 {% block content %}
-<!-- 1. Hero Section -->
-<section class="hero">
+<!-- 1. Hero Section (Improved Banner/Aesthetics) -->
+<section class="hero hero-large">
     <div class="hero-content">
-        <h1 class="hero-title">Where Every Sip Tells a Story</h1>
-        <p class="hero-subtitle">Experience the finest coffee, curated wines, and delectable cakes in a cozy ambiance.</p>
-        <a href="/menu" class="btn-primary">View Our Menu</a>
+        <h1 class="hero-title">RD Cafe: Where Every Sip Tells a Story</h1>
+        <p class="hero-subtitle">Experience the finest coffee, curated wines, and delectable cakes in a cozy ambiance, designed for your perfect escape.</p>
+        <a href="{{ url_for('menu') }}" class="btn-primary btn-hero-cta">Explore Our Menu</a>
+        <a href="{{ url_for('order') }}" class="btn-secondary btn-hero-cta">Order Online Now</a>
     </div>
 </section>
 
@@ -18,19 +19,28 @@
     <div class="specialties-grid">
         <!-- Item 1: RD Coffee -->
         <div class="specialty-card">
-            <img src="{{ url_for('static', filename='images/hot-latte.jpg') }}" alt="RD Special Coffee" class="specialty-img">
+            <img src="{{ url_for('static', filename='images/hot-latte.jpg') }}" 
+                 alt="RD Special Coffee" 
+                 class="specialty-img"
+                 onerror="this.onerror=null;this.src='https://placehold.co/400x300/e4d5b7/333?text=Coffee';">
             <h3>RD Special Coffee</h3>
             <p>Our signature blend, rich and aromatic, crafted with hand-picked beans from the Himalayas.</p>
         </div>
         <!-- Item 2: Lava Cake -->
         <div class="specialty-card">
-            <img src="{{ url_for('static', filename='images/lava-cake.jpg') }}" alt="Lava Cake" class="specialty-img">
+            <img src="{{ url_for('static', filename='images/lava-cake.jpg') }}" 
+                 alt="Lava Cake" 
+                 class="specialty-img"
+                 onerror="this.onerror=null;this.src='https://placehold.co/400x300/e4d5b7/333?text=Cake';">
             <h3>Molten Lava Cake</h3>
             <p>A decadent chocolate cake with a warm, gooey center that melts in your mouth.</p>
         </div>
         <!-- Item 3: RD Wine -->
         <div class="specialty-card">
-            <img src="{{ url_for('static', filename='images/red-wine.jpg') }}" alt="RD Fine Wine" class="specialty-img">
+            <img src="{{ url_for('static', filename='images/red-wine.jpg') }}" 
+                 alt="RD Fine Wine" 
+                 class="specialty-img"
+                 onerror="this.onerror=null;this.src='https://placehold.co/400x300/e4d5b7/333?text=Wine';">
             <h3>RD Fine Wine</h3>
             <p>A carefully selected red wine that pairs perfectly with our menu and your mood.</p>
         </div>
@@ -52,12 +62,12 @@
     </div>
 </section>
 
-<!-- 4. Loyalty Program Banner -->
-<section class="loyalty-banner">
+<!-- 4. Loyalty Program Banner (Refined aesthetics) -->
+<section class="loyalty-banner" style="background-color: #333; color: white; padding: 60px 20px; text-align: center; border-radius: 8px; margin-bottom: 40px;">
     <div class="container">
-        <h2>Join the RD Cafe Club!</h2>
-        <p>Get a point card, earn rewards, and enjoy exclusive coupons. Sign up today!</p>
-        <a href="#" class="btn-secondary">Get Your Point Card</a>
+        <h2 style="font-family: 'Playfair Display', serif; font-size: 2.5rem; margin-bottom: 10px;">Join the RD Cafe Club!</h2>
+        <p style="font-size: 1.1rem; margin-bottom: 30px; max-width: 700px; margin-left: auto; margin-right: auto;">Get a point card, earn rewards, and enjoy exclusive coupons. Sign up today and start saving with every purchase.</p>
+        <a href="{{ url_for('signup') }}" class="btn-primary" style="background-color: #e4d5b7; color: #333; border: 2px solid #e4d5b7;">Sign Up & Get Points</a>
     </div>
 </section>
 {% endblock %}

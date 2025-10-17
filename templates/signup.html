@@ -2,13 +2,20 @@
 {% block title %}Sign Up - RD Cafe{% endblock %}
 {% block content %}
 <div class="form-container">
-    <form  {{ csrf_token() }}
-        method="POST" action="{{ url_for('signup') }}" class="auth-form">
-        <h2>Create Your Account</h2>
-        <a href="{{ url_for('google.login') }}" class="btn-google">
+    {% include '_flash_messages.html' %}
+    
+    <form method="POST" action="{{ url_for('signup') }}" class="auth-form">
+        <!-- CSRF Token लाई form भित्र राखिएको छ -->
+        {{ csrf_token() }}
+        
+        <h2>Create Your Customer Account</h2>
+
+        <!-- Google Login Button (Customer Only) -->
+        <a href="{{ url_for('google_login') }}" class="btn-google">
             <img src="{{ url_for('static', filename='images/google-icon.svg') }}" alt="Google icon">
             Continue with Google
         </a>
+        
         <div class="divider"><span>OR</span></div>
         <div class="form-group">
             <label for="username">Username</label>

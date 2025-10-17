@@ -1,127 +1,187 @@
 /*
-====================================
-RD CAFE - Main Stylesheet
-====================================
+===================================================
+RD CAFE - FINAL MAIN STYLESHEET (Nepali: Sahi Coding)
+===================================================
 */
 
-/* --- 1. General & Font Imports --- */
-body {
-  font-family: 'Poppins', sans-serif;
+/* --- 1. CSS Variables & Global Setup (रङ्ग र फन्ट सेटअप) --- */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  /* Coffee Theme Colors */
+  --color-primary: #2c2a2a;       /* Dark Espresso */
+  --color-accent: #c7a17a;        /* Coffee/Caramel Accent */
+  --color-light-bg: #f8f5f1;      /* Creamy Background */
+  --color-secondary-button: #e4d5b7; /* Light Beige Button */
+  --color-white: #ffffff;
+  --color-danger: #dc3545;        /* Red for Delete/Cancel */
+  --color-success: #28a745;       /* Green for Complete/Success */
+}
+
+* {
   margin: 0;
-  background-color: #f9f8f7;
-  color: #4a4a4a;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--color-light-bg);
+  color: var(--color-primary);
   line-height: 1.6;
 }
 
 .container {
+  width: 90%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 15px;
 }
 
 .content-section {
-  padding: 60px 0;
+  padding: 80px 0;
 }
 
 .section-title {
   font-family: 'Playfair Display', serif;
   font-size: 2.8rem;
+  font-weight: 700;
+  color: var(--color-primary);
   text-align: center;
   margin-bottom: 50px;
-  color: #2c2a2a;
+  position: relative;
 }
 
-/* --- 2. Buttons --- */
-.btn-primary, .btn-secondary {
-  display: inline-block;
-  padding: 12px 30px;
-  border-radius: 5px;
-  text-decoration: none;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  cursor: pointer;
-  text-align: center;
+.section-title::after {
+  content: "";
+  display: block;
+  width: 80px;
+  height: 3px;
+  background-color: var(--color-accent);
+  margin: 15px auto 0;
+  border-radius: 2px;
 }
 
-.btn-primary {
-  background-color: #e4d5b7;
-  color: #2c2a2a;
-  border: 2px solid #e4d5b7;
-}
 
-.btn-primary:hover {
-  background-color: #d3c4a6;
-  border-color: #d3c4a6;
-  transform: translateY(-2px);
-}
-
-.btn-secondary {
-  background-color: transparent;
-  color: #fff;
-  border: 2px solid #fff;
-}
-
-.btn-secondary:hover {
-  background-color: #fff;
-  color: #2c2a2a;
-}
-
-/* --- 3. Navbar --- */
+/* --- 2. Navbar & Header (नेभिगेसन) --- */
 .navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #2c2a2a;
-  padding: 1rem 2rem;
-  color: white;
+  background-color: var(--color-white);
+  border-bottom: 2px solid #e6dccf;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  padding: 15px 0;
   position: sticky;
   top: 0;
-  width: 100%;
   z-index: 1000;
-  box-sizing: border-box;
+}
+
+.navbar .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .nav-logo {
   font-family: 'Playfair Display', serif;
-  font-size: 2rem;
-  color: #e4d5b7;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--color-primary);
   text-decoration: none;
 }
 
 .nav-menu {
-  display: flex;
-  align-items: center;
   list-style: none;
-  gap: 2.5rem;
+  display: flex;
+  gap: 25px;
   margin: 0;
 }
 
-.nav-link {
-  color: white;
+.nav-menu a {
   text-decoration: none;
+  color: var(--color-accent); /* Coffee Accent Color */
+  font-weight: 600;
   font-size: 1rem;
   transition: color 0.3s ease;
   padding: 5px 0;
 }
 
-.nav-link:hover {
-  color: #e4d5b7;
+.nav-menu a:hover,
+.nav-menu a.active {
+  color: #a9825c; /* Darker Coffee on Hover */
 }
 
 .btn-nav {
-  background-color: #e4d5b7;
-  color: #2c2a2a !important; /* Important to override hover color */
+  background-color: var(--color-primary);
+  color: var(--color-light-bg) !important;
   padding: 8px 15px;
   border-radius: 5px;
   font-weight: 600;
 }
 .btn-nav:hover {
-  background-color: #d3c4a6;
-  color: #2c2a2a !important;
+  background-color: #4a4a4a;
 }
 
 
-/* --- 4. Hero Section --- */
+/* --- 3. Buttons & Forms (बटन र फर्म) --- */
+.btn-primary, .btn-secondary, .auth-btn {
+  display: inline-block;
+  padding: 12px 30px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  text-align: center;
+  border: none;
+}
+
+.btn-primary, .auth-btn {
+  background-color: var(--color-accent);
+  color: var(--color-white);
+  border: 2px solid var(--color-accent);
+}
+
+.btn-primary:hover, .auth-btn:hover {
+  background-color: #a9825c;
+  border-color: #a9825c;
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  background-color: var(--color-secondary-button);
+  color: var(--color-primary);
+  border: 2px solid var(--color-secondary-button);
+}
+
+.btn-secondary:hover {
+  background-color: #d1c5b1;
+  border-color: #d1c5b1;
+}
+
+.form-container { 
+  max-width: 500px; 
+  margin: 50px auto; 
+  padding: 40px; 
+  background-color: var(--color-white); 
+  border-radius: 10px; 
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); 
+}
+.form-group { margin-bottom: 20px; }
+.form-group label { display: block; margin-bottom: 8px; font-weight: 600; }
+.form-control { 
+  width: 100%; 
+  padding: 12px; 
+  border: 1px solid #ddd; 
+  border-radius: 5px; 
+  box-sizing: border-box; 
+  font-size: 1rem; 
+  font-family: 'Inter', sans-serif; 
+}
+.auth-btn { width: 100%; }
+.form-link a { color: var(--color-accent); }
+
+
+/* --- 4. Home Page & Specialties (होम पेज) --- */
 .hero {
   position: relative;
   height: 90vh;
@@ -129,8 +189,8 @@ body {
   align-items: center;
   justify-content: center;
   text-align: center;
-  color: white;
-  background-image: url('../images/cafe-background.jpg');
+  color: var(--color-white);
+  background-image: url('../images/cafe-background.jpg'); /* Ensure this path is correct */
   background-size: cover;
   background-position: center;
 }
@@ -150,238 +210,50 @@ body {
   z-index: 2;
 }
 
-.hero-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 4rem;
-  margin: 0;
+.hero-buttons {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
 }
 
-.hero-subtitle {
-  font-size: 1.2rem;
-  margin: 20px 0 30px 0;
-  max-width: 600px;
-}
-
-
-/* --- 5. Home Page Sections --- */
 .specialties-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 30px;
 }
-.specialty-card { text-align: center; }
-.specialty-img { width: 100%; height: 250px; object-fit: cover; border-radius: 10px; margin-bottom: 15px; }
-.specialty-card h3 { font-family: 'Playfair Display', serif; font-size: 1.5rem; margin: 10px 0; }
-.offers-section { background-color: #fff; }
-.offers-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
-.offer-card { background-color: #f9f8f7; padding: 30px; border: 1px solid #eee; border-radius: 10px; text-align: center; }
-.offer-card h3 { font-family: 'Playfair Display', serif; color: #c7b28a; font-size: 1.8rem; margin-top: 0; }
-.loyalty-banner { background: linear-gradient(45deg, #4a4a4a, #2c2a2a); color: #fff; padding: 60px 20px; text-align: center; }
-.loyalty-banner h2 { font-family: 'Playfair Display', serif; font-size: 2.5rem; margin-top: 0; }
-.loyalty-banner p { margin-bottom: 30px; }
+.specialty-img { 
+  width: 100%; 
+  height: 250px; 
+  object-fit: cover; 
+  border-radius: 10px; 
+  margin-bottom: 15px; 
+} 
 
-
-/* --- 6. Menu Page & Menu Cards --- */
-.menu-page-section { padding: 60px 0; }
-.menu-category { margin-bottom: 60px; }
-.menu-category-title { font-family: 'Playfair Display', serif; font-size: 2.5rem; text-align: left; color: #2c2a2a; border-bottom: 2px solid #e4d5b7; padding-bottom: 10px; margin-bottom: 40px; }
-.menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
-.menu-card { background-color: #fff; border-radius: 10px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); overflow: hidden; transition: transform 0.3s ease, box-shadow 0.3s ease; display: flex; flex-direction: column; }
-.menu-card:hover { transform: translateY(-10px); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12); }
-.card-image-container { width: 100%; height: 220px; overflow: hidden; }
-.card-image { width: 100%; height: 100%; object-fit: cover; object-position: center; transition: transform 0.3s ease; }
-.menu-card:hover .card-image { transform: scale(1.05); }
-.card-content { padding: 20px; text-align: left; flex-grow: 1; display: flex; flex-direction: column; }
-.card-title { font-size: 1.4rem; font-weight: 600; margin: 0 0 10px 0; color: #333; }
-.card-description { font-size: 0.9rem; color: #666; flex-grow: 1; margin-bottom: 15px; }
-.card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
-.card-price { font-size: 1.2rem; font-weight: 700; color: #2c2a2a; }
-.add-to-cart-btn { background-color: #e4d5b7; color: #2c2a2a; border: none; padding: 10px 20px; border-radius: 5px; font-weight: 600; cursor: pointer; transition: background-color 0.3s ease; }
-.add-to-cart-btn:hover { background-color: #d3c4a6; }
-
-
-/* --- 7. Auth, Order & Contact Forms --- */
-.form-container { max-width: 500px; margin: 50px auto; padding: 40px; background-color: #fff; border-radius: 10px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); }
-.auth-form h2 { font-family: 'Playfair Display', serif; text-align: center; margin-bottom: 30px; color: #2c2a2a; }
-.form-group { margin-bottom: 20px; }
-.form-group label { display: block; margin-bottom: 8px; font-weight: 600; }
-.form-control { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; font-size: 1rem; font-family: 'Poppins', sans-serif; }
-.auth-btn { width: 100%; border: none; font-size: 1.1rem; }
-.form-link { text-align: center; margin-top: 20px; }
-.form-link p { margin: 0; }
-.form-link a { color: #c7b28a; font-weight: 600; text-decoration: none; }
-.form-link a:hover { text-decoration: underline; }
-
-/* Google Button */
-.btn-google { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 12px; background-color: #fff; color: #444; border: 1px solid #ddd; border-radius: 5px; text-decoration: none; font-weight: 600; transition: background-color 0.3s ease; box-sizing: border-box; }
-.btn-google:hover { background-color: #f5f5f5; }
-.btn-google img { width: 20px; height: 20px; }
-.divider { display: flex; align-items: center; text-align: center; color: #aaa; margin: 25px 0; }
-.divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid #ddd; }
-.divider:not(:empty)::before { margin-right: .25em; }
-.divider:not(:empty)::after { margin-left: .25em; }
-
-
-/* --- 8. Flash Messages (Alerts) --- */
-.alert { padding: 15px 20px; margin-bottom: 20px; border-radius: 5px; color: #fff; border: 1px solid transparent; }
-.alert-success { background-color: #28a745; border-color: #238b3b; }
-.alert-danger { background-color: #dc3545; border-color: #c72e3d; }
-.alert-info { background-color: #17a2b8; border-color: #148a9d; }
-
-
-/* --- 9. Dashboard --- */
-.dashboard-content { text-align: center; padding: 40px; background: #fff; border-radius: 10px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); }
-.dashboard-content p { font-size: 1.1rem; margin-bottom: 30px; }
-.dashboard-content a { margin: 0 10px; }
-
-
-/* --- 10. Owner Info Page --- */
-.owner-container { display: flex; flex-wrap: wrap; gap: 40px; align-items: flex-start; background: #fff; padding: 40px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); }
-.owner-photo { flex: 1; min-width: 250px; }
-.owner-photo img { width: 100%; border-radius: 10px; }
-.owner-bio { flex: 2; min-width: 300px; }
-.owner-name { font-family: 'Playfair Display', serif; font-size: 2.5rem; margin-top: 0; margin-bottom: 20px; }
-.language-tabs { border-bottom: 1px solid #ddd; margin-bottom: 20px; }
-.tab-link { background-color: transparent; border: none; outline: none; cursor: pointer; padding: 14px 16px; font-size: 1rem; font-weight: 600; color: #666; transition: all 0.3s ease; border-bottom: 3px solid transparent; }
-.tab-link:hover { color: #333; }
-.tab-link.active { color: #2c2a2a; border-bottom: 3px solid #e4d5b7; }
-.tab-content { display: none; animation: fadeIn 0.5s; }
-.tab-content h3 { font-family: 'Playfair Display', serif; margin-bottom: 15px; }
-@keyframes fadeIn { from {opacity: 0;} to {opacity: 1;} }
-
-
-/* --- 11. Footer --- */
-footer {
-  text-align: center;
-  padding: 20px;
-  background-color: #2c2a2a;
-  color: #aaa;
-  margin-top: 40px;
+.loyalty-banner { 
+  background: linear-gradient(45deg, var(--color-primary), #4a4a4a); 
+  color: var(--color-white); 
+  padding: 60px 20px; 
+  text-align: center; 
+}
+.loyalty-banner .btn-secondary {
+    background-color: var(--color-light-bg);
+    border-color: var(--color-light-bg);
+}
+.loyalty-banner .btn-secondary:hover {
+    background-color: #d1c5b1;
 }
 
-/* --- 12. Responsive Design --- */
-@media (max-width: 768px) {
-  .section-title { font-size: 2.2rem; }
-  .hero-title { font-size: 2.5rem; }
-  .nav-menu { gap: 1.5rem; flex-wrap: wrap; justify-content: center; }
-  .navbar { flex-direction: column; padding: 1rem; }
-  .offers-grid { grid-template-columns: 1fr; }
-  .form-container { margin: 20px 10px; padding: 20px; }
-}
-/* -------------------------------
-   Global Styles - RD Cafe
----------------------------------- */
 
-/* Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Inter:wght@400;500;600&display=swap');
-
-/* Base Reset */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: 'Inter', sans-serif;
-  background-color: #f8f5f1; /* light coffee background */
-  color: #2c2a2a;
-  line-height: 1.6;
-}
-
-/* Container */
-.container {
-  width: 90%;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-/* -------------------------------
-   Navbar
----------------------------------- */
-.navbar {
-  background-color: #fff;
-  border-bottom: 2px solid #e6dccf;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-  padding: 15px 0;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-}
-
-.navbar .container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.navbar-brand {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.6rem;
-  font-weight: 600;
-  color: #2c2a2a;
-  text-decoration: none;
-}
-
-.nav-links {
-  list-style: none;
-  display: flex;
-  gap: 25px;
-}
-
-.nav-links a {
-  text-decoration: none;
-  color: #2c2a2a;
-  font-weight: 500;
-  transition: color 0.3s ease;
-}
-
-.nav-links a:hover {
-  color: #c7a17a; /* coffee accent */
-}
-
-/* -------------------------------
-   Section Titles
----------------------------------- */
-.section-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 2.5rem;
-  font-weight: 600;
-  color: #2c2a2a;
-  text-align: center;
-  margin-bottom: 50px;
-  position: relative;
-}
-
-.section-title::after {
-  content: "";
-  display: block;
-  width: 80px;
-  height: 3px;
-  background-color: #c7a17a;
-  margin: 15px auto 0;
-  border-radius: 2px;
-}
-
-/* -------------------------------
-   Menu Section & Cards
----------------------------------- */
-.menu-page-section { 
-  padding: 80px 0; 
-}
-
-.menu-category { 
-  margin-bottom: 70px; 
-}
-
+/* --- 5. Menu Cards (मेनु कार्ड्स) --- */
 .menu-category-title {
   font-family: 'Playfair Display', serif;
   font-size: 2rem;
   font-weight: 600;
-  color: #2c2a2a;
+  color: var(--color-primary);
   margin-bottom: 25px;
   padding-bottom: 8px;
-  border-bottom: 3px solid #c7a17a;
+  border-bottom: 3px solid var(--color-accent);
   display: inline-block;
 }
 
@@ -392,7 +264,7 @@ body {
 }
 
 .menu-card {
-  background-color: #fff;
+  background-color: var(--color-white);
   border-radius: 15px;
   box-shadow: 0 4px 15px rgba(0,0,0,0.08);
   overflow: hidden;
@@ -408,116 +280,190 @@ body {
 
 .card-image-container {
   width: 100%;
-  height: 220px;
+  height: 250px; 
   overflow: hidden;
 }
 
 .card-image {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: cover; /* Keeps image filling the space */
   object-position: center;
   transition: transform 0.4s ease;
 }
 
-.menu-card:hover .card-image {
-  transform: scale(1.08);
+.card-title { font-family: 'Playfair Display', serif; }
+.card-price { color: var(--color-accent); font-weight: 700; }
+.add-to-cart-btn { background-color: var(--color-accent); }
+
+
+/* --- 6. ORDER/CHECKOUT Page (नयाँ अर्डर/चेकआउट लेआउट) --- */
+.checkout-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 40px;
+    align-items: flex-start;
 }
 
-.card-content {
-  padding: 20px;
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
+@media (min-width: 992px) {
+    .checkout-grid {
+        grid-template-columns: 2fr 1fr; /* Order form (2/3) and Summary (1/3) */
+    }
 }
 
-.card-title {
-  font-size: 1.3rem;
-  font-weight: 600;
-  margin: 0 0 8px;
-  color: #2c2a2a;
+.order-summary, .checkout-details {
+    background-color: var(--color-white);
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
 }
 
-.card-description {
-  font-size: 0.95rem;
-  color: #666;
-  flex-grow: 1;
-  margin-bottom: 15px;
-}
-
-.card-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: auto;
-}
-
-.card-price {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: #2c2a2a;
-}
-
-.add-to-cart-btn {
-  background-color: #c7a17a;
-  color: #fff;
-  border: none;
-  padding: 10px 18px;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.add-to-cart-btn:hover {
-  background-color: #a9825c;
-}
-
-/* -------------------------------
-   Footer
----------------------------------- */
-.footer {
-  background-color: #2c2a2a;
-  color: #fff;
-  padding: 50px 0;
-  margin-top: 80px;
-}
-
-.footer .container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-}
-
-.footer p {
-  margin: 10px 0;
-  font-size: 0.9rem;
-  color: #ccc;
-}
-
-.footer a {
-  color: #c7a17a;
-  text-decoration: none;
-}
-
-.footer a:hover {
-  text-decoration: underline;
-}
-
-/* -------------------------------
-   Responsive
----------------------------------- */
-@media (max-width: 768px) {
-  .nav-links {
+.summary-item {
+    display: flex;
     gap: 15px;
-  }
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px dashed #eee;
+}
 
-  .section-title {
-    font-size: 2rem;
-  }
+.summary-item:last-child {
+    border-bottom: none;
+}
 
-  .menu-category-title {
-    font-size: 1.6rem;
+.item-img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.item-details {
+    flex-grow: 1;
+}
+
+.total-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.1rem;
+    padding: 10px 0;
+    margin-top: 15px;
+}
+.total-row.grand-total {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    border-top: 2px solid var(--color-accent);
+    margin-top: 20px;
+    padding-top: 20px;
+}
+
+.discount-field {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.discount-field input {
+    flex-grow: 1;
+}
+.discount-field button {
+    padding: 10px 15px;
+    border-radius: 5px;
+}
+.btn-apply {
+    background-color: var(--color-secondary-button);
+    color: var(--color-primary);
+}
+.btn-apply:hover {
+    background-color: #d1c5b1;
+}
+
+
+/* --- 7. Admin Panel & Tables (एडमिन प्यानल) --- */
+.admin-table-container {
+    overflow-x: auto;
+}
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-size: 0.95rem;
+    background-color: var(--color-white);
+    border-radius: 8px;
+    overflow: hidden;
+}
+.admin-table th, .admin-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #f0f0f0;
+}
+.admin-table th {
+    background-color: #eee;
+    font-weight: 600;
+    color: var(--color-primary);
+}
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+.status-badge {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: capitalize;
+}
+.status-pending { background-color: #ffc10740; color: #b08100; }
+.status-processing { background-color: #007bff40; color: #0056b3; }
+.status-completed { background-color: var(--color-success); color: var(--color-white); }
+.status-cancelled { background-color: var(--color-danger); color: var(--color-white); }
+
+.btn-action {
+    padding: 5px 10px;
+    font-size: 0.85rem;
+    margin-right: 5px;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-block;
+    transition: background-color 0.2s;
+}
+.btn-edit { background-color: #17a2b8; color: var(--color-white); }
+.btn-delete, .btn-cancel { background-color: var(--color-danger); color: var(--color-white); }
+.btn-complete { background-color: var(--color-success); color: var(--color-white); }
+
+
+/* --- 8. Responsive Design (मोबाइलका लागि) --- */
+@media (max-width: 768px) {
+  .section-title { font-size: 2.2rem; }
+  .hero-title { font-size: 2.5rem; }
+  .navbar .container { flex-direction: column; }
+  .nav-menu { gap: 15px; flex-wrap: wrap; justify-content: center; margin-top: 10px; }
+  .hero-buttons { flex-direction: column; gap: 10px; }
+  .btn-primary, .btn-secondary, .auth-btn { padding: 10px 20px; }
+  .form-container { margin: 20px 10px; padding: 20px; }
+  .menu-category-title { font-size: 1.6rem; }
+  
+  /* Admin Table Responsive */
+  .admin-table thead { display: none; }
+  .admin-table, .admin-table tbody, .admin-table tr, .admin-table td { display: block; width: 100%; }
+  .admin-table tr { margin-bottom: 15px; border: 1px solid #ccc; border-radius: 8px; }
+  .admin-table td { 
+      text-align: right; 
+      padding-left: 50%; 
+      position: relative; 
+      border-bottom: none;
+  }
+  .admin-table td::before {
+      content: attr(data-label);
+      position: absolute;
+      left: 10px;
+      width: calc(50% - 20px);
+      padding-right: 10px;
+      white-space: nowrap;
+      text-align: left;
+      font-weight: 600;
   }
 }
