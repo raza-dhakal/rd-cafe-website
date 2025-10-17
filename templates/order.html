@@ -1,110 +1,49 @@
 {% extends "base.html" %}
-{% block title %}Checkout & Payment - RD Cafe{% endblock %}
-
+{% block title %}Order Now - RD Cafe{% endblock %}
 {% block content %}
 <section class="container content-section">
-    <h1 class="section-title">Complete Your Order</h1>
-
-    {% include '_flash_messages.html' %}
-    
-    {% set has_items = cart_items | length > 0 if cart_items is defined else false %}
-
-    {% if has_items %}
-    <div class="checkout-grid">
+    <div class="form-container" style="max-width: 600px;">
         
-        <div class="order-summary">
-            <h2 style="font-size: 1.8rem; margin-bottom: 25px;">Your Cart ({{ cart_items | length }} items)</h2>
+        <!-- Flash messages go here, outside the form -->
+        {% include '_flash_messages.html' %}
+        
+        <form method="POST" action="{{ url_for('order') }}" class="auth-form">
+            <!-- CSRF token goes HERE, inside the form -->
+            {{ csrf_token() }}
+            <h2 class="section-title" style="margin-bottom: 30px; font-size: 2.5rem;">Place Your Order</h2>
             
-            {% for item in cart_items %}
-            <div class="summary-item">
-                <img src="{{ url_for('static', filename='images/' + item.image_url) }}" 
-                     alt="{{ item.name }}" 
-                     class="item-img"
-                     onerror="this.onerror=null;this.src='{{ url_for('static', filename='images/placeholder.jpg') }}';">
-                
-                <div class="item-details">
-                    <h3 style="margin: 0;">{{ item.name }} (x{{ item.quantity }})</h3>
-                    <p style="color: #666; font-size: 0.9rem;">{{ item.description | truncate(60, true) }}</p>
-                </div>
-                <span class="card-price">Rs. {{ "%.2f"|format(item.total_price) }}</span>
+            <div class="form-group">
+                <label for="customer_name">Your Name</label>
+                <input type="text" id="customer_name" name="customer_name" class="form-control" 
+                       value="{{ session.username if session.logged_in else '' }}" required>
             </div>
-            {% endfor %}
-            
-            <div class="total-breakdown">
-                <div class="total-row">
-                    <span>Subtotal:</span>
-                    <span class="card-price">Rs. {{ "%.2f"|format(subtotal) }}</span>
-                </div>
-                <div class="total-row" style="color: var(--color-danger); font-weight: 600;">
-                    <span>Discount:</span>
-                    <span class="card-price">Rs. - {{ "%.2f"|format(discount) }}</span>
-                </div>
-                <div class="total-row grand-total">
-                    <span>Grand Total:</span>
-                    <span class="card-price">Rs. {{ "%.2f"|format(final_total) }}</span>
-                </div>
+
+            <div class="form-group">
+                <label for="menu_item">Select Your Item</label>
+                <select id="menu_item" name="menu_item_id" class="form-control" required>
+                    <option value="" disabled selected>-- Choose from our menu --</option>
+                    {% for item in menu_items %}
+                        <option value="{{ item.id }}">{{ item.name }} - (Rs. {{ "%.2f"|format(item.price) }})</option>
+                    {% endfor %}
+                </select>
             </div>
-        </div>
 
-        <div class="checkout-details">
-            <h2 style="font-size: 1.8rem; margin-bottom: 25px;">Checkout Details</h2>
-            
-            <form method="POST" action="{{ url_for('place_final_order') }}" class="auth-form" style="box-shadow: none; padding: 0;">
-                {{ csrf_token() }}
+            <div class="form-group">
+                <label for="quantity">Quantity</label>
+                <input type="number" id="quantity" name="quantity" class="form-control" value="1" min="1" required>
+            </div>
 
-                <div class="form-group">
-                    <label for="customer_name">Your Name</label>
-                    <input type="text" id="customer_name" name="customer_name" class="form-control" 
-                           value="{{ session.username if session.logged_in else '' }}" required>
-                </div>
-                <div class="form-group">
-                    <label for="delivery_address">Delivery Address</label>
-                    <input type="text" id="delivery_address" name="delivery_address" class="form-control" required placeholder="Main Street, Kathmandu">
-                </div>
-                
-                {% if session.logged_in and user_points is defined and user_points > 0 %}
-                <div class="form-group">
-                    <label style="display: flex; justify-content: space-between; align-items: center;">
-                        <span>Use Reward Points</span>
-                        <span style="font-weight: 400; font-size: 0.9rem;">(Available: {{ user_points }} Points)</span>
-                    </label>
-                    <div class="discount-field">
-                        <input type="number" id="points_to_use" name="points_to_use" class="form-control" 
-                               min="0" max="{{ user_points }}" placeholder="Enter points to use (e.g., 100)">
-                        <button type="button" class="btn-apply">Apply</button>
-                    </div>
-                    <small style="color: #666;">100 Points = Rs. 100 Discount</small>
-                </div>
-                {% endif %}
+            <div class="form-group">
+                <label for="payment_method">Payment Method</label>
+                <select id="payment_method" name="payment_method" class="form-control" required>
+                    <option value="Cash on Delivery">Cash on Delivery</option>
+                    <option value="Esewa">Esewa</option>
+                    <option value="Khalti">Khalti</option>
+                </select>
+            </div>
 
-                <div class="form-group">
-                    <label for="coupon_code">Free Coupon Code</label>
-                    <div class="discount-field">
-                        <input type="text" id="coupon_code" name="coupon_code" class="form-control" placeholder="Enter coupon code (e.g., COFFEELOVE)">
-                        <button type="button" class="btn-apply">Apply</button>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="payment_method">Payment Method</label>
-                    <select id="payment_method" name="payment_method" class="form-control" required>
-                        <option value="Cash on Delivery">Cash on Delivery</option>
-                        <option value="Esewa">Esewa</option>
-                        <option value="Khalti">Khalti</option>
-                    </select>
-                </div>
-                
-                <button type="submit" class="btn-primary auth-btn">Confirm & Place Order (Rs. {{ "%.2f"|format(final_total) }})</button>
-            </form>
-        </div>
+            <button type="submit" class="btn-primary auth-btn">Place Order</button>
+        </form>
     </div>
-    {% else %}
-    <div style="text-align: center; padding: 50px; background: #fff; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
-        <h2 style="font-family: 'Playfair Display', serif; color: var(--color-accent);">Your Cart is Empty!</h2>
-        <p style="margin: 20px 0;">Please go to the menu to add some delicious items.</p>
-        <a href="{{ url_for('menu') }}" class="btn-primary">View Our Menu</a>
-    </div>
-    {% endif %}
-
 </section>
 {% endblock %}
